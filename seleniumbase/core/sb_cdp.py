@@ -1790,29 +1790,34 @@ class CDPMethods():
                             xvfb_display.start()
 
     def __get_configured_pyautogui(self, pyautogui_copy):
-        if (
-            shared_utils.is_linux()
-            and hasattr(pyautogui_copy, "_pyautogui_x11")
-            and "DISPLAY" in os.environ.keys()
-        ):
+        if shared_utils.is_linux():
             if (
-                hasattr(sb_config, "_pyautogui_x11_display")
-                and sb_config._pyautogui_x11_display
-                and hasattr(pyautogui_copy._pyautogui_x11, "_display")
-                and (
-                    sb_config._pyautogui_x11_display
-                    == pyautogui_copy._pyautogui_x11._display
-                )
+                hasattr(pyautogui_copy, "_pyautogui_x11")
+                and "DISPLAY" in os.environ.keys()
             ):
-                pass
-            else:
-                import Xlib.display
-                pyautogui_copy._pyautogui_x11._display = (
-                    Xlib.display.Display(os.environ['DISPLAY'])
-                )
-                sb_config._pyautogui_x11_display = (
-                    pyautogui_copy._pyautogui_x11._display
-                )
+                if (
+                    hasattr(sb_config, "_pyautogui_x11_display")
+                    and sb_config._pyautogui_x11_display
+                    and hasattr(pyautogui_copy._pyautogui_x11, "_display")
+                    and (
+                        sb_config._pyautogui_x11_display
+                        == pyautogui_copy._pyautogui_x11._display
+                    )
+                ):
+                    pass
+                else:
+                    import Xlib.display
+                    pyautogui_copy._pyautogui_x11._display = (
+                        Xlib.display.Display(os.environ['DISPLAY'])
+                    )
+                    sb_config._pyautogui_x11_display = (
+                        pyautogui_copy._pyautogui_x11._display
+                    )
+            elif (
+                hasattr(pyautogui_copy, "_pyautogui_wayland")
+                and not pyautogui_copy._pyautogui_wayland._display
+            ):
+                pyautogui_copy._pyautogui_wayland.setWindow(40);
         return pyautogui_copy
 
     def gui_press_key(self, key):
