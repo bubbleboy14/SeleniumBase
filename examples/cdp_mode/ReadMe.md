@@ -467,7 +467,7 @@ sb.cdp.close_active_tab()
 sb.cdp.get_active_tab()
 sb.cdp.get_tabs()
 sb.cdp.get_window()
-sb.cdp.get_text(selector)
+sb.cdp.get_text(selector="body")
 sb.cdp.get_title()
 sb.cdp.get_current_url()
 sb.cdp.get_origin()
@@ -583,12 +583,12 @@ sb.cdp.save_as_pdf(name, folder=None)
 
 ### 🐙 <b translate="no">Pure CDP Mode</b> (<code translate="no">sb_cdp</code>)
 
-<b translate="no">Pure CDP Mode</b> doesn't use WebDriver for anything. The browser is launched using CDP, and all browser actions are performed using CDP (or <code>PyAutoGUI</code>). Initialization:
+In <b translate="no">Pure CDP Mode</b>, the browser is launched using CDP, and browser actions are performed using CDP. WebDriver isn't available at all, but SeleniumBase can still call <code>PyAutoGUI</code> methods when CDP isn't enough. Here's how to initialize Pure CDP Mode:
 
 ```python
 from seleniumbase import sb_cdp
 
-sb = sb_cdp.Chrome(url=None, **kwargs)
+sb = sb_cdp.Chrome(url)
 ```
 
 <b translate="no">Pure CDP Mode</b> includes all methods from regular CDP Mode, except that they're called directly from <code>sb</code> instead of <code>sb.cdp</code>. Eg: <code>sb.gui_click_captcha()</code>. To quit a CDP-launched browser, use `sb.driver.stop()`.
