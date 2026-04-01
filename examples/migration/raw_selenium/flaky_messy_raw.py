@@ -12,13 +12,14 @@ class FlakyMessyRawSelenium(TestCase):
         options = webdriver.ChromeOptions()
         options.add_argument("--disable-notifications")
         if "linux" in sys.platform:
-            options.add_argument("--headless=new")
+            options.add_argument("--headless")
         options.add_experimental_option(
             "excludeSwitches", ["enable-automation", "enable-logging"],
         )
         prefs = {
             "credentials_enable_service": False,
             "profile.password_manager_enabled": False,
+            "profile.password_manager_leak_detection": False,
         }
         options.add_experimental_option("prefs", prefs)
         service = Service(service_args=["--disable-build-check"])
@@ -54,14 +55,17 @@ class FlakyMessyRawSelenium(TestCase):
         self.driver.find_element(by_css, "div.inventory_list")
         element = self.driver.find_element(by_css, "span.title")
         self.assertEqual(element.text, "Products")
+
         self.driver.find_element(by_css, 'button[name*="backpack"]').click()
         self.driver.find_element(by_css, "#shopping_cart_container a").click()
         element = self.driver.find_element(by_css, "span.title")
         self.assertEqual(element.text, "Your Cart")
         element = self.driver.find_element(by_css, "div.cart_item")
         self.assertIn("Backpack", element.text)
+
         self.driver.find_element(by_css, "#remove-sauce-labs-backpack").click()
         self.assertFalse(self.is_element_visible("div.cart_item"))
+
         self.driver.find_element(by_css, "#react-burger-menu-btn").click()
         self.driver.find_element(by_css, "a#logout_sidebar_link").click()
         self.driver.find_element(by_css, "input#login-button")

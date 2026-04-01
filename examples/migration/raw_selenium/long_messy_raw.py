@@ -14,13 +14,14 @@ class LongMessyRawSelenium(TestCase):
         options = webdriver.ChromeOptions()
         options.add_argument("--disable-notifications")
         if "linux" in sys.platform:
-            options.add_argument("--headless=new")
+            options.add_argument("--headless")
         options.add_experimental_option(
             "excludeSwitches", ["enable-automation", "enable-logging"],
         )
         prefs = {
             "credentials_enable_service": False,
             "profile.password_manager_enabled": False,
+            "profile.password_manager_leak_detection": False,
         }
         options.add_experimental_option("prefs", prefs)
         service = Service(service_args=["--disable-build-check"])
@@ -55,6 +56,7 @@ class LongMessyRawSelenium(TestCase):
             EC.visibility_of_element_located((by_css, "span.title"))
         )
         self.assertEqual(element.text, "Products")
+
         element = WebDriverWait(self.driver, 10).until(
             EC.element_to_be_clickable((by_css, 'button[name*="backpack"]'))
         )
@@ -71,6 +73,7 @@ class LongMessyRawSelenium(TestCase):
             EC.visibility_of_element_located((by_css, "div.cart_item"))
         )
         self.assertIn("Backpack", element.text)
+
         element = WebDriverWait(self.driver, 10).until(
             EC.element_to_be_clickable((by_css, "#remove-sauce-labs-backpack"))
         )
@@ -78,6 +81,7 @@ class LongMessyRawSelenium(TestCase):
         WebDriverWait(self.driver, 10).until(
             EC.invisibility_of_element((by_css, "div.cart_item"))
         )
+
         element = WebDriverWait(self.driver, 10).until(
             EC.element_to_be_clickable((by_css, "#react-burger-menu-btn"))
         )

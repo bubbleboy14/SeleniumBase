@@ -13,13 +13,14 @@ class RefinedRawSelenium(TestCase):
         options = webdriver.ChromeOptions()
         options.add_argument("--disable-notifications")
         if "linux" in sys.platform:
-            options.add_argument("--headless=new")
+            options.add_argument("--headless")
         options.add_experimental_option(
             "excludeSwitches", ["enable-automation", "enable-logging"],
         )
         prefs = {
             "credentials_enable_service": False,
             "profile.password_manager_enabled": False,
+            "profile.password_manager_leak_detection": False,
         }
         options.add_experimental_option("prefs", prefs)
         service = Service(service_args=["--disable-build-check"])
@@ -110,12 +111,15 @@ class RefinedRawSelenium(TestCase):
         self.type("#password", "secret_sauce\n")
         self.assert_element("div.inventory_list")
         self.assert_text("Products", "span.title")
+
         self.click('button[name*="backpack"]')
         self.click("#shopping_cart_container a")
         self.assert_exact_text("Your Cart", "span.title")
         self.assert_text("Backpack", "div.cart_item")
+
         self.click("#remove-sauce-labs-backpack")
         self.assert_element_not_visible("div.cart_item")
+
         self.click("#react-burger-menu-btn")
         self.click("a#logout_sidebar_link")
         self.assert_element("input#login-button")
