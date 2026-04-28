@@ -2,13 +2,14 @@
 from seleniumbase import SB
 
 with SB(uc=True, test=True) as sb:
-    url = "https://sms-man.com/login"
+    url = "https://agents.moderationinterface.com"
     sb.activate_cdp_mode(url)
-    sb.sleep(2.2)
-    if not sb.is_element_present('input[name="email"]'):
+    sb.sleep(3)
+    if not sb.is_element_present("#login-submit"):
         sb.solve_captcha()
-        sb.sleep(1)
-        sb.wait_for_element('[name="email"]', timeout=3)
         sb.sleep(2)
+        sb.wait_for_element("#login-submit", timeout=3)
+        sb.sleep(2)
+    sb.sleep(1)
     sb.solve_captcha()
     sb.sleep(2)
