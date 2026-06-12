@@ -18,11 +18,7 @@ from selenium.common.exceptions import ElementClickInterceptedException
 from selenium.common.exceptions import InvalidSessionIdException
 from selenium.common.exceptions import SessionNotCreatedException
 from selenium.webdriver.chrome.service import Service as ChromeService
-from selenium.webdriver.common.options import ArgOptions
-from selenium.webdriver.common.service import utils as service_utils
-from selenium.webdriver.edge.service import Service as EdgeService
-from selenium.webdriver.firefox.service import Service as FirefoxService
-from selenium.webdriver.safari.service import Service as SafariService
+from selenium.webdriver.common import utils as common_utils
 from seleniumbase import config as sb_config
 from seleniumbase import decorators
 from seleniumbase import drivers  # webdriver storage folder for SeleniumBase
@@ -793,6 +789,7 @@ def uc_open_with_cdp_mode(driver, url=None, **kwargs):
     cdp.grant_permissions = CDPM.grant_permissions
     cdp.grant_all_permissions = CDPM.grant_all_permissions
     cdp.reset_permissions = CDPM.reset_permissions
+    cdp.get_all_urls = CDPM.get_all_urls
     cdp.get_all_cookies = CDPM.get_all_cookies
     cdp.set_all_cookies = CDPM.set_all_cookies
     cdp.save_cookies = CDPM.save_cookies
@@ -831,6 +828,11 @@ def uc_open_with_cdp_mode(driver, url=None, **kwargs):
     cdp.activate_messenger = CDPM.activate_messenger
     cdp.set_messenger_theme = CDPM.set_messenger_theme
     cdp.post_message = CDPM.post_message
+    cdp.download_file = CDPM.download_file
+    cdp.save_file_as = CDPM.save_file_as
+    cdp.assert_downloaded_file = CDPM.assert_downloaded_file
+    cdp.get_path_of_downloaded_file = CDPM.get_path_of_downloaded_file
+    cdp.set_download_path = CDPM.set_download_path
     cdp.set_locale = CDPM.set_locale
     cdp.set_local_storage_item = CDPM.set_local_storage_item
     cdp.set_session_storage_item = CDPM.set_session_storage_item
@@ -2668,7 +2670,7 @@ def _set_chrome_options(
         args = " ".join(sys.argv)
         debug_port = 9222
         if ("-n" in sys.argv or " -n=" in args or args == "-c"):
-            debug_port = service_utils.free_port()
+            debug_port = common_utils.free_port()
         chrome_options.add_argument("--remote-debugging-port=%s" % debug_port)
     if swiftshader:
         chrome_options.add_argument("--use-gl=angle")
@@ -3672,6 +3674,7 @@ def get_remote_driver(
     device_height,
     device_pixel_ratio,
 ):
+    from selenium.webdriver.common.options import ArgOptions
     # Construct the address for connecting to a Selenium Grid
     if servername.startswith("https://"):
         protocol = "https"
@@ -4130,6 +4133,7 @@ def get_local_driver(
     b_path = binary_location
     use_uc = is_using_uc(undetectable, browser_name)
     if browser_name == constants.Browser.FIREFOX:
+        from selenium.webdriver.firefox.service import Service as FFService
         firefox_options = _set_firefox_options(
             downloads_path,
             headless,
@@ -4184,7 +4188,7 @@ def get_local_driver(
                         sys.argv = sys_args  # Put back original sys args
         # Launch Firefox
         if os.path.exists(local_geckodriver):
-            service = FirefoxService(
+            service = FFService(
                 executable_path=local_geckodriver,
                 log_output=os.devnull,
             )
@@ -4229,7 +4233,7 @@ def get_local_driver(
                 else:
                     raise  # Not an obvious fix.
         else:
-            service = FirefoxService(log_output=os.devnull)
+            service = FFService(log_output=os.devnull)
             try:
                 driver = webdriver.Firefox(
                     service=service,
@@ -4337,6 +4341,7 @@ def get_local_driver(
             driver = webdriver.Ie(service=service, options=ie_options)
             return extend_driver(driver)
     elif browser_name == constants.Browser.EDGE:
+        from selenium.webdriver.edge.service import Service as EdgeService
         prefs = {
             "download.default_directory": downloads_path,
             "download.directory_upgrade": True,
@@ -4756,7 +4761,7 @@ def get_local_driver(
             args = " ".join(sys.argv)
             free_port = 9222
             if ("-n" in sys.argv or " -n=" in args or args == "-c"):
-                free_port = service_utils.free_port()
+                free_port = common_utils.free_port()
             edge_options.add_argument("--remote-debugging-port=%s" % free_port)
         if swiftshader:
             edge_options.add_argument("--use-gl=angle")
@@ -4866,7 +4871,7 @@ def get_local_driver(
                 args = " ".join(sys.argv)
                 free_port = 9222
                 if ("-n" in sys.argv or " -n=" in args or args == "-c"):
-                    free_port = service_utils.free_port()
+                    free_port = common_utils.free_port()
                 edge_options.add_argument(
                     "--remote-debugging-port=%s" % free_port
                 )
@@ -4904,6 +4909,7 @@ def get_local_driver(
             raise Exception("Can't run Safari tests in multithreaded mode!")
         warnings.simplefilter("ignore", category=DeprecationWarning)
         from selenium.webdriver.safari.options import Options as SafariOptions
+        from selenium.webdriver.safari.service import Service as SafariService
         service = SafariService(quiet=False)
         options = SafariOptions()
         if (
