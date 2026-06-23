@@ -1,4 +1,4 @@
-"""Add CDP methods to extend the driver"""
+"""The CDP Mode API (sync format), which wraps the async format."""
 import asyncio
 import fasteners
 import mycdp
@@ -179,6 +179,30 @@ class CDPMethods():
 
     def refresh(self, *args, **kwargs):
         self.reload(*args, **kwargs)
+
+    def goto_if_not_url(self, url):
+        """Opens the url in the browser if it's not the current url (*).
+        Parameters tagged on by search engines are ignored for this method.
+        Eg. If the current url is:
+            * https://www.bing.com/search?q=SeleniumBase&source=hp
+            And the url privided by this method call is:
+            * https://www.bing.com/search?q=SeleniumBase
+            Then the urls will be considered the same,
+            and no open() action will be performed.
+        This method is primarily used by Recorder Mode script generation,
+        where both clicks and opens are recorded. So if a click() action
+        leads to an goto() action, then the script generator will attempt
+        to convert the goto() action into goto_if_not_url() so that the
+        same page isn't opened again if the user is already on the page."""
+        current_url = self.get_current_url()
+        if current_url != url:
+            if (
+                "?q=" not in current_url
+                or "&" not in current_url
+                or current_url.find("?q=") >= current_url.find("&")
+                or current_url.split("&")[0] != url
+            ):
+                self.goto(url)
 
     def get_event_loop(self):
         return self.loop
@@ -2040,7 +2064,7 @@ class CDPMethods():
         self.__slow_mode_pause_if_set()
         self.loop.run_until_complete(self.page.sleep(0.025))
 
-    def __gui_click_x_y(self, x, y, timeframe=0.25, uc_lock=False):
+    def __gui_click_x_y(self, x, y, timeframe=0.27, uc_lock=False):
         self.__install_pyautogui_if_missing()
         import pyautogui
         pyautogui = self.__get_configured_pyautogui(pyautogui)
@@ -2070,7 +2094,7 @@ class CDPMethods():
                 print(" <DEBUG> pyautogui.click(%s, %s)" % (x, y))
             pyautogui.click(x=x, y=y)
 
-    def gui_click_x_y(self, x, y, timeframe=0.25):
+    def gui_click_x_y(self, x, y, timeframe=0.27):
         gui_lock = FileLock(constants.MultiBrowser.PYAUTOGUILOCK)
         with gui_lock:  # Prevent issues with multiple processes
             self.__make_sure_pyautogui_lock_is_writable()
@@ -2102,7 +2126,7 @@ class CDPMethods():
             self.bring_active_window_to_front()
             self.__gui_click_x_y(x, y, timeframe=timeframe, uc_lock=False)
 
-    def gui_click_element(self, selector, timeframe=0.25):
+    def gui_click_element(self, selector, timeframe=0.27):
         self.__slow_mode_pause_if_set()
         x, y = self.get_gui_element_center(selector)
         self.__add_light_pause()
@@ -2111,7 +2135,7 @@ class CDPMethods():
         self.loop.run_until_complete(self.page.wait(0.2))
 
     def gui_click_with_offset(
-        self, selector, x, y, timeframe=0.25, center=False
+        self, selector, x, y, timeframe=0.27, center=False
     ):
         """Click an element at an {X,Y}-offset location.
         {0,0} is the top-left corner of the element.
@@ -2281,6 +2305,10 @@ class CDPMethods():
         x2, y2 = self.get_gui_element_center("div.sliderTarget")
         self.close_active_tab()
         self.switch_to_tab(tab)
+        if shared_utils.is_windows():
+            time.sleep(0.48)
+            self.loop.run_until_complete(self.page.wait(0.1))
+        x2 = x2 + 22.5  # Overshoot drop to maximize compatibility
         self.gui_drag_drop_points(x1, y1, x2, y2, timeframe=0.55)
         time.sleep(0.25)
         self.loop.run_until_complete(self.page.wait(0.2))
@@ -2582,7 +2610,7 @@ class CDPMethods():
             return True
         return False
 
-    def __gui_drag_drop(self, x1, y1, x2, y2, timeframe=0.25, uc_lock=False):
+    def __gui_drag_drop(self, x1, y1, x2, y2, timeframe=0.27, uc_lock=False):
         self.__install_pyautogui_if_missing()
         import pyautogui
         pyautogui = self.__get_configured_pyautogui(pyautogui)
@@ -2677,7 +2705,11 @@ class CDPMethods():
         self.__add_light_pause()
         self.gui_drag_drop_points(x, y, x, y, timeframe=timeframe)
 
-    def __gui_hover_x_y(self, x, y, timeframe=0.25, uc_lock=False):
+    def gui_move_to_element(self, selector, timeframe=0.27):
+        """Same as gui_hover_element()"""
+        return self.gui_hover_element(selector, timeframe=timeframe)
+
+    def __gui_hover_x_y(self, x, y, timeframe=0.27, uc_lock=False):
         self.__install_pyautogui_if_missing()
         import pyautogui
         pyautogui = self.__get_configured_pyautogui(pyautogui)
@@ -2702,7 +2734,7 @@ class CDPMethods():
             pyautogui.moveTo(x, y, timeframe, pyautogui.easeOutQuad)
             time.sleep(0.056)
 
-    def gui_hover_x_y(self, x, y, timeframe=0.25):
+    def gui_hover_x_y(self, x, y, timeframe=0.27):
         gui_lock = FileLock(constants.MultiBrowser.PYAUTOGUILOCK)
         with gui_lock:  # Prevent issues with multiple processes
             self.__install_pyautogui_if_missing()
@@ -2753,7 +2785,12 @@ class CDPMethods():
             self.bring_active_window_to_front()
             self.__gui_hover_x_y(x, y, timeframe=timeframe, uc_lock=False)
 
-    def gui_hover_element(self, selector, timeframe=0.25):
+    def gui_hover_element(self, selector, timeframe=0.27):
+        try:
+            self.__verify_pyautogui_has_a_headed_browser()
+        except Exception:
+            self.hover_element(selector, timeframe=timeframe)
+            return
         self.__slow_mode_pause_if_set()
         element_rect = self.get_gui_element_rect(selector)
         width = element_rect["width"]
@@ -2765,7 +2802,7 @@ class CDPMethods():
             self.__slow_mode_pause_if_set()
         self.loop.run_until_complete(self.page.wait(0.1))
 
-    def hover_element(self, selector, timeframe=0.25):
+    def hover_element(self, selector, timeframe=0.27):
         element = self.select(selector)
         gui_lock = FileLock(constants.MultiBrowser.PYAUTOGUILOCK)
         with gui_lock:
@@ -3343,7 +3380,7 @@ class CDPMethods():
     def assert_true(self, expression, msg=None):
         if not expression:
             if not msg:
-                raise AssertionError("%s is not true" % expression)
+                raise AssertionError("%s is not true." % expression)
             else:
                 raise AssertionError(
                     "%s is not true. (%s)" % (expression, msg)
@@ -3352,27 +3389,48 @@ class CDPMethods():
     def assert_false(self, expression, msg=None):
         if expression:
             if not msg:
-                raise AssertionError("%s is not false" % expression)
+                raise AssertionError("%s is not false." % expression)
             else:
                 raise AssertionError(
                     "%s is not false. (%s)" % (expression, msg)
                 )
 
-    def assert_equal(self, first, second):
+    def assert_equal(self, first, second, msg=None):
         if first != second:
-            raise AssertionError("%s is not equal to %s" % (first, second))
+            if not msg:
+                raise AssertionError(
+                    "%s is not equal to %s." % (first, second)
+                )
+            else:
+                raise AssertionError(
+                    "%s is not equal to %s. (%s)" % (first, second, msg))
 
-    def assert_not_equal(self, first, second):
+    def assert_not_equal(self, first, second, msg=None):
         if first == second:
-            raise AssertionError("%s is equal to %s" % (first, second))
+            if not msg:
+                raise AssertionError("%s is equal to %s." % (first, second))
+            else:
+                raise AssertionError(
+                    "%s is equal to %s. (%s)" % (first, second, msg)
+                )
 
-    def assert_in(self, first, second):
+    def assert_in(self, first, second, msg=None):
         if first not in second:
-            raise AssertionError("%s is not in %s" % (first, second))
+            if not msg:
+                raise AssertionError("%s is not in %s." % (first, second))
+            else:
+                raise AssertionError(
+                    "%s is not in %s. (%s)" % (first, second, msg)
+                )
 
-    def assert_not_in(self, first, second):
+    def assert_not_in(self, first, second, msg=None):
         if first in second:
-            raise AssertionError("%s is in %s" % (first, second))
+            if not msg:
+                raise AssertionError("%s is in %s." % (first, second))
+            else:
+                raise AssertionError(
+                    "%s is in %s. (%s)" % (first, second, msg)
+                )
 
     def js_scroll_into_view(self, selector):
         css_selector = self.__convert_to_css_if_xpath(selector)
