@@ -363,13 +363,13 @@ class UCPresentationClass(BaseCase):
         self.create_presentation(theme="serif", transition="none")
         self.add_slide(
             "<h3>Up next...</h3><hr /><br /><br /><h4><mk-0><code>"
-            "cloudflare.com/login"
+            "wsform.com/demo/"
             "</code></mk-0></h4><br /><br /><br /><br />"
         )
         self.begin_presentation(filename="uc_presentation.html")
 
         with SB(uc=True, test=True, locale="en") as sb:
-            url = "https://www.cloudflare.com/login"
+            url = "https://wsform.com/demo/"
             sb.activate_cdp_mode(url)
             sb.sleep(3.5)
             sb.solve_captcha()
@@ -531,7 +531,7 @@ class UCPresentationClass(BaseCase):
             items = sb.find_elements('[data-item-id]')
             for item in items:
                 if required_text.lower() in item.text.lower():
-                    description = item.querySelector(
+                    description = item.query_selector(
                         '[data-automation-id="product-title"]'
                     )
                     if (
@@ -540,7 +540,7 @@ class UCPresentationClass(BaseCase):
                     ):
                         unique_item_text.append(description.text)
                         print("* " + description.text)
-                        price = item.querySelector(
+                        price = item.query_selector(
                             '[data-automation-id="product-price"]'
                         )
                         if price:
@@ -879,11 +879,11 @@ class UCPresentationClass(BaseCase):
             unique_item_text = []
             items = sb.find_elements("article")
             for item in items:
-                description = item.querySelector("article h3")
+                description = item.query_selector("article h3")
                 if description and description.text not in unique_item_text:
                     unique_item_text.append(description.text)
                     price_text = ""
-                    price = item.querySelector(
+                    price = item.query_selector(
                         'div div span[aria-hidden="true"]'
                     )
                     if price:

@@ -15,18 +15,16 @@ with sync_playwright() as p:
     search_box = page.locator("input#keyword-search-input")
     search_box.press_sequentially(search + "\n", delay=80)
     page.wait_for_timeout(2200)
-    for i in range(17):
-        sb.scroll_down(16)
-        sb.sleep(0.14)
     print('*** Nordstrom Search for "%s":' % search)
     unique_item_text = []
     items = sb.find_elements("article")
     for item in items:
-        description = item.querySelector("article h3")
+        description = item.query_selector("article h3")
         if description and description.text not in unique_item_text:
             unique_item_text.append(description.text)
             price_text = ""
-            price = item.querySelector('div div span[aria-hidden="true"]')
+            price = item.query_selector('div div span[aria-hidden="true"]')
             if price:
                 price_text = price.text
                 print("* %s (%s)" % (description.text, price_text))
+                item.flash(color="44CC88")

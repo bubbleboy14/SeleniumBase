@@ -298,13 +298,13 @@ with SB(uc=True, test=True, ad_block=True) as sb:
     items = sb.find_elements('[data-item-id]')
     for item in items:
         if required_text.lower() in item.text.lower():
-            description = item.querySelector(
+            description = item.query_selector(
                 '[data-automation-id="product-title"]'
             )
             if description and description.text not in unique_item_text:
                 unique_item_text.append(description.text)
                 print("* " + description.text)
-                price = item.querySelector(
+                price = item.query_selector(
                     '[data-automation-id="product-price"]'
                 )
                 if price:
@@ -563,6 +563,12 @@ sb.save_as_html(name, folder=None)
 sb.save_screenshot(name, folder=None, selector=None)
 sb.print_to_pdf(name, folder=None)
 sb.save_as_pdf(name, folder=None)
+sb.save_as_pdf_to_logs(name=None)
+sb.save_screenshot_to_logs(name=None, selector=None)
+sb.save_page_source_to_logs(name=None)
+sb.save_as_html_to_logs(name=None)
+sb.save_data_to_logs(data, file_name=None)
+sb.append_data_to_logs(data, file_name=None)
 sb.quit()  # (Pure CDP Mode only: `sb_cdp`)
 ```
 
@@ -667,7 +673,7 @@ await page.click_if_visible(selector, timeout=0)
 await page.click_with_offset(selector, x, y, center=False, timeout=5)
 await page.solve_captcha()
 await page.click_captcha()  # Same as solve_captcha()
-await page.reload(ignore_cache=True, script_to_evaluate_on_load=None)
+await page.reload(ignore_cache=False, script_to_evaluate_on_load=None)
 await page.evaluate(expression)
 await page.js_dumps(obj_name)
 await page.back()
