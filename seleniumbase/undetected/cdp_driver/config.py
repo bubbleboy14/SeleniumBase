@@ -324,7 +324,7 @@ class Config:
             "OptimizationTargetPrediction,OptimizationGuideModelDownloading,"
             "SidePanelPinning,UserAgentClientHint,PrivacySandboxSettings4,"
             "OptimizationHintsFetching,InterestFeedContentSuggestions,"
-            "Bluetooth,WebBluetooth,UnifiedWebBluetooth,ComponentUpdater,"
+            "ComponentUpdater,NetworkPrediction,"
             "DisableLoadExtensionCommandLineSwitch,WebAuthentication,"
             "OmniboxUIFeedback,OmniboxPopupShortcut,PasskeyAuth,"
             "MediaRouter,DialMediaRouteProvider,WebRtcHideLocalIpsWithMdns"
@@ -424,12 +424,11 @@ def get_default_preferences(proxy=None):
             "credit_card_enabled": False
         }
     }
-    if proxy:
-        prefs["webrtc"] = {
-            "ip_handling_policy": "disable_non_proxied_udp",
-            "multiple_routes_enabled": False,
-            "nonproxied_udp_enabled": False
-        }
+    prefs["webrtc"] = {
+        "ip_handling_policy": "disable_non_proxied_udp",
+        "multiple_routes_enabled": False,
+        "nonproxied_udp_enabled": False,
+    }
     return prefs
 
 
