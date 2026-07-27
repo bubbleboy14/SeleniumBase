@@ -2,6 +2,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import pathlib
+import random
 import secrets
 import typing
 from contextlib import suppress
@@ -14,8 +15,10 @@ import mycdp.dom
 import mycdp.overlay
 import mycdp.page
 import mycdp.runtime
+from seleniumbase.fixtures import shared_utils
 
 logger = logging.getLogger(__name__)
+IS_LINUX = shared_utils.is_linux()
 if typing.TYPE_CHECKING:
     from .tab import Tab
 
@@ -493,7 +496,7 @@ class Element:
         button: str = "left",
         buttons: typing.Optional[int] = 1,
         modifiers: typing.Optional[int] = 0,
-        hold: bool = False,
+        timeframe: float = 0.0,
     ):
         """
         Native click (on element).
@@ -522,29 +525,55 @@ class Element:
             using_pim = await self.tab.evaluate(script2)
         if not using_px and not using_pim:
             asyncio.create_task(self.flash_async(0.25))'''
+        with suppress(Exception):
+            await self.mouse_move_async()
+            await asyncio.sleep(random.uniform(0.0035, 0.0048))
+        x = center[0] + random.uniform(-0.85, 0.85)
+        y = center[1] + random.uniform(-0.85, 0.85)
         asyncio.create_task(
             self._tab.send(
                 cdp.input_.dispatch_mouse_event(
                     "mousePressed",
-                    x=center[0],
-                    y=center[1],
+                    x=x,
+                    y=y,
                     modifiers=modifiers,
                     button=cdp.input_.MouseButton(button),
                     buttons=buttons,
                     click_count=1,
+                    force=0.5,
                 )
             ),
         )
+        if not timeframe or timeframe <= 0:
+            # If 0 (or less), hold for a small amount of time
+            await asyncio.sleep(random.uniform(0.0126, 0.0152))
+            x += random.uniform(-0.12, 0.12)
+            y += random.uniform(-0.12, 0.12)
+        else:
+            end_time = asyncio.get_running_loop().time() + timeframe
+            while asyncio.get_running_loop().time() < end_time:
+                await self._tab.send(
+                    cdp.input_.dispatch_mouse_event(
+                        type_="mouseMoved",
+                        x=x + random.uniform(-0.12, 0.12),
+                        y=y + random.uniform(-0.12, 0.12),
+                        button=cdp.input_.MouseButton(button),
+                        buttons=buttons,
+                        force=0.5,
+                    )
+                )
+            await asyncio.sleep(random.uniform(0.120, 0.280))
         asyncio.create_task(
             self._tab.send(
                 cdp.input_.dispatch_mouse_event(
                     "mouseReleased",
-                    x=center[0],
-                    y=center[1],
+                    x=x,
+                    y=y,
                     modifiers=modifiers,
                     button=cdp.input_.MouseButton(button),
                     buttons=buttons,
                     click_count=1,
+                    force=0.0,
                 )
             ),
         )
@@ -580,6 +609,9 @@ class Element:
             logger.debug("Clicking on location: %.2f, %.2f" % center_pos)
         else:
             logger.debug("Clicking on location: %.2f, %.2f" % (x_pos, y_pos))
+        with suppress(Exception):
+            await self.mouse_move_async()
+            await asyncio.sleep(random.uniform(0.0035, 0.0048))
         script1 = 'sessionStorage.getItem("pxsid") !== null;'
         script2 = 'sessionStorage.getItem("PIM-SESSION-ID") !== null;'
         using_px = True
@@ -605,6 +637,7 @@ class Element:
                     button=cdp.input_.MouseButton(button),
                     buttons=buttons,
                     click_count=1,
+                    force=0.5,
                 )
             )
         )
@@ -618,6 +651,7 @@ class Element:
                     button=cdp.input_.MouseButton(button),
                     buttons=buttons,
                     click_count=1,
+                    force=0.0,
                 )
             ),
         )
@@ -786,19 +820,127 @@ class Element:
     async def send_keys_async(self, text: str):
         """
         Send text to an input field, or any other html element.
-        Hint: If you ever get stuck where using py:meth:`~click`
-        does not work, sending the keystroke \\n or \\r\\n
+        Hint: If you ever get stuck where using `~click()`
+        does not work, sending the keystroke \n or \r\n
         or a spacebar works wonders!
         :param text: text to send
         :return: None
         """
+        if self.tag_name.lower() == "textarea" and text.endswith("\r\n"):
+            text = text[0:-1]
         await self.apply("(elem) => elem.focus()")
-        [
-            await self._tab.send(
-                cdp.input_.dispatch_key_event("char", text=char)
+        if (
+            IS_LINUX
+            and not (
+                self.tag_name.lower() == "textarea"
+                and text.endswith("\r") or text.endswith("\n")
             )
-            for char in list(text)
-        ]
+        ):
+            [
+                await self._tab.send(
+                    cdp.input_.dispatch_key_event(type_="char", text=char)
+                )
+                for char in list(text)
+            ]
+            return
+        # Map non-alphanumeric symbols to the correct CDP virtual key code.
+        # Prevents collisions with control keys. Eg. ord('.') = 46 = VK_DELETE.
+        SYMBOL_MAP = {
+            ".": ("Period", 190),
+            ",": ("Comma", 188),
+            "-": ("Minus", 189),
+            "=": ("Equal", 187),
+            "/": ("Slash", 191),
+            "\\": ("Backslash", 220),
+            ";": ("Semicolon", 186),
+            "'": ("Quote", 222),
+            "`": ("Backquote", 192),
+            "[": ("BracketLeft", 219),
+            "]": ("BracketRight", 221),
+            "!": ("Digit1", 49),
+            "@": ("Digit2", 50),
+            "#": ("Digit3", 51),
+            "$": ("Digit4", 52),
+            "%": ("Digit5", 53),
+            "^": ("Digit6", 54),
+            "&": ("Digit7", 55),
+            "*": ("Digit8", 56),
+            "(": ("Digit9", 57),
+            ")": ("Digit0", 48),
+            "_": ("Minus", 189),
+            "+": ("Equal", 187),
+            "{": ("BracketLeft", 219),
+            "}": ("BracketRight", 221),
+            "|": ("Backslash", 220),
+            ":": ("Semicolon", 186),
+            '"': ("Quote", 222),
+            "<": ("Comma", 188),
+            ">": ("Period", 190),
+            "?": ("Slash", 191),
+            "~": ("Backquote", 192),
+        }
+        for char in text:
+            # 1. Map character to its DOM key attributes
+            if char in ("\r", "\n"):
+                key = "Enter"
+                code = "Enter"
+                vk = 13
+                text_val = "\r"
+            elif char == "\t":
+                key = "Tab"
+                code = "Tab"
+                vk = 9
+                text_val = ""
+            elif char == " ":
+                key = " "
+                code = "Space"
+                vk = 32
+                text_val = " "
+            else:
+                key = char
+                text_val = char
+                if char.isalpha():
+                    code = f"Key{char.upper()}"
+                    vk = ord(char.upper())
+                elif char.isdigit():
+                    code = f"Digit{char}"
+                    vk = ord(char)
+                elif char in SYMBOL_MAP:
+                    code, vk = SYMBOL_MAP[char]
+                else:
+                    code = ""
+                    vk = 0
+            # 2. Trigger keydown DOM event WITHOUT inserting text
+            await self._tab.send(
+                cdp.input_.dispatch_key_event(
+                    type_="rawKeyDown",
+                    key=key,
+                    code=code,
+                    windows_virtual_key_code=vk,
+                )
+            )
+            # 3. Trigger keypress DOM event AND insert text
+            if text_val:
+                await self._tab.send(
+                    cdp.input_.dispatch_key_event(
+                        type_="char",
+                        key=key,
+                        code=code,
+                        text=text_val,
+                        unmodified_text=text_val,
+                        windows_virtual_key_code=vk,
+                    )
+                )
+            # 4. Trigger keyup DOM event
+            await asyncio.sleep(random.uniform(0.0126, 0.0152))
+            await self._tab.send(
+                cdp.input_.dispatch_key_event(
+                    type_="keyUp",
+                    key=key,
+                    code=code,
+                    windows_virtual_key_code=vk,
+                )
+            )
 
     async def send_file_async(self, *file_paths: PathLike):
         """

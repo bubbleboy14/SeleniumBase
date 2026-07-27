@@ -169,17 +169,17 @@ setup(
         'setuptools>=83.0.0;python_version>="3.10"',
         'wheel>=0.47.0',
         'attrs>=26.1.0',
-        'certifi>=2026.6.17',
+        'certifi>=2026.7.22',
         'exceptiongroup>=1.3.1',
         'websockets~=15.0.1;python_version<"3.10"',
         'websockets>=16.1.1;python_version>="3.10"',
         'filelock~=3.19.1;python_version<"3.10"',
-        'filelock>=3.31.1;python_version>="3.10"',
+        'filelock>=3.32.0;python_version>="3.10"',
         'fasteners>=0.20',
         'mycdp>=1.4.0',
         'pynose>=1.5.5',
         'platformdirs~=4.4.0;python_version<"3.10"',
-        'platformdirs>=4.10.1;python_version>="3.10"',
+        'platformdirs>=4.11.0;python_version>="3.10"',
         'typing-extensions>=4.16.0',
         'sbvirtualdisplay>=1.4.0',
         'MarkupSafe>=3.0.3',
@@ -231,7 +231,7 @@ setup(
         'parameterized==0.9.0',
         'behave==1.2.6',  # Newer ones had issues
         'soupsieve~=2.8.4;python_version<"3.10"',
-        'soupsieve~=2.9.0;python_version>="3.10"',
+        'soupsieve~=2.9.1;python_version>="3.10"',
         'beautifulsoup4~=4.15.0',
         'pyotp~=2.10.0',
         'python-xlib==0.33;platform_system=="Linux"',
@@ -302,9 +302,10 @@ setup(
         # pip install -e .[playwright]
         # (For the Playwright integration.)
         "playwright": [
-            'playwright>=1.60.0',
+            'playwright>=1.60.0;python_version<"3.10"',
+            'playwright>=1.61.0;python_version>="3.10"',
             'greenlet>=3.2.5;python_version<"3.10"',
-            'greenlet>=3.5.3;python_version>="3.10"',
+            'greenlet>=3.5.4;python_version>="3.10"',
         ],
         # pip install -e .[pyautogui]
         # (Already a required dependency on Linux now.)

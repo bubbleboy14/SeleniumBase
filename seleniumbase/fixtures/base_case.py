@@ -2998,7 +2998,7 @@ class BaseCase(unittest.TestCase):
             drop_selector, drop_by
         )
         if self.__is_cdp_swap_needed():
-            self.cdp.gui_drag_and_drop(drag_selector, drop_selector)
+            self.cdp.drag_and_drop(drag_selector, drop_selector)
             return
         drag_element = self.wait_for_element_clickable(
             drag_selector, by=drag_by, timeout=timeout
@@ -5109,6 +5109,10 @@ class BaseCase(unittest.TestCase):
             self.click_captcha = self.cdp.click_captcha
         if hasattr(self.cdp, "add_handler"):
             self.add_handler = self.cdp.add_handler
+        if hasattr(self.cdp, "clear_input"):
+            self.clear_input = self.cdp.clear_input
+        if hasattr(self.cdp, "click_and_hold"):
+            self.click_and_hold = self.cdp.click_and_hold
         if hasattr(self.cdp, "close_active_tab"):
             self.close_active_tab = self.cdp.close_active_tab
         if hasattr(self.cdp, "find_element_by_text"):

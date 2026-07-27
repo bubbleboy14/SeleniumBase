@@ -87,6 +87,11 @@ class CDPMethods():
                 element, *args, **kwargs
             )
         )
+        element.click_and_hold = (
+            lambda *args, **kwargs: (
+                self.__mouse_click_and_hold(element, *args, **kwargs)
+            )
+        )
         element.mouse_drag = (
             lambda destination: self.__mouse_drag(element, destination)
         )
@@ -500,7 +505,10 @@ class CDPMethods():
         element = elements[number]
         if scroll:
             element.scroll_into_view()
-        element.click()
+        try:
+            element.mouse_click()  # Simulated click (NO PyAutoGUI)
+        except Exception:
+            element.click()  # Standard CDP click (Can be detected)
 
     def click_nth_visible_element(self, selector, number, scroll=True):
         """Finds all matching page elements and clicks the nth visible one.
@@ -518,7 +526,10 @@ class CDPMethods():
         element = elements[number]
         if scroll:
             element.scroll_into_view()
-        element.click()
+        try:
+            element.mouse_click()  # Simulated click (NO PyAutoGUI)
+        except Exception:
+            element.click()  # Standard CDP click (Can be detected)
 
     def click_link(self, link_text):
         self.find_elements_by_text(link_text, "a")[0].click()
@@ -606,9 +617,20 @@ class CDPMethods():
             self.loop.run_until_complete(element.is_in_viewport_async())
         )
 
-    def __mouse_click(self, element):
+    def __mouse_click(self, element, timeframe=0):
         result = (
-            self.loop.run_until_complete(element.mouse_click_async())
+            self.loop.run_until_complete(
+                element.mouse_click_async(timeframe=timeframe)
+            )
+        )
+        self.loop.run_until_complete(self.page.wait(0.2))
+        return result
+
+    def __mouse_click_and_hold(self, element, timeframe=2):
+        result = (
+            self.loop.run_until_complete(
+                element.mouse_click_async(timeframe=timeframe)
+            )
         )
         self.loop.run_until_complete(self.page.wait(0.2))
         return result
@@ -640,7 +662,7 @@ class CDPMethods():
             text = text[:-1]
         for key in text:
             element.send_keys(key)
-            time.sleep(float(0.042 + (random.random() / 110.0)))
+            time.sleep(float(0.0422 + (random.random() / 112.0)))
         if submit:
             element.send_keys("\r\n")
             time.sleep(0.044)
@@ -875,41 +897,12 @@ class CDPMethods():
             timeout = settings.SMALL_TIMEOUT
         self.__slow_mode_pause_if_set()
         element = self.find_element(selector, timeout=timeout)
-        tag_name = element.tag_name
-        if tag_name:
-            tag_name = tag_name.lower().strip()
-        if (
-            tag_name in [
-                "a",
-                "button",
-                "canvas",
-                "div",
-                "input",
-                "label",
-                "li",
-                "path",
-                "span",
-                "svg",
-            ]
-            and "contains(" not in selector
-        ):
-            if scroll:
-                element.scroll_into_view()
-            try:
-                element.mouse_click()  # Simulated click (NOT PyAutoGUI)
-            except Exception:
-                element.click()  # Standard CDP click
-        else:
-            if scroll:
-                if "contains(" in selector:
-                    element.scroll_into_view()
-                else:
-                    try:
-                        element.scroll_into_view()
-                    except Exception:
-                        with suppress(Exception):
-                            self.js_scroll_into_view(selector)
-            element.click()  # Standard CDP click
+        if scroll:
+            element.scroll_into_view()
+        try:
+            element.mouse_click()  # Simulated click (NO PyAutoGUI)
+        except Exception:
+            element.click()  # Standard CDP click (Can be detected)
         self.__slow_mode_pause_if_set()
         self.loop.run_until_complete(self.page.wait(0.2))
 
@@ -957,7 +950,10 @@ class CDPMethods():
                 if (width != 0 or height != 0):
                     if scroll:
                         element.scroll_into_view()
-                    element.click()
+                    try:
+                        element.mouse_click()  # Simulated click (NO PyAutoGUI)
+                    except Exception:
+                        element.click()  # Standard CDP click (Can be detected)
                     click_count += 1
                     time.sleep(0.044)
                     self.__slow_mode_pause_if_set()
@@ -965,8 +961,146 @@ class CDPMethods():
             except Exception:
                 break
 
+    def click_and_hold(self, selector, timeout=None, scroll=True, timeframe=2):
+        """(Simulate a mouse click & hold)"""
+        if not timeout:
+            timeout = settings.SMALL_TIMEOUT
+        self.__slow_mode_pause_if_set()
+        element = self.find_element(selector, timeout=timeout)
+        if scroll:
+            element.scroll_into_view()
+        element.click_and_hold(timeframe)
+        self.__slow_mode_pause_if_set()
+        self.loop.run_until_complete(self.page.wait(0.2))
+
+    def drag_and_drop(
+        self, drag_selector, drop_selector, timeout=None, scroll=True,
+    ):
+        """(Simulate a mouse drag & drop)"""
+        if not timeout:
+            timeout = settings.SMALL_TIMEOUT
+        self.__slow_mode_pause_if_set()
+        self.find_element(drag_selector, timeout=timeout)
+        drop_target = self.find_element(drop_selector, timeout=timeout)
+        if scroll:
+            drop_target.scroll_into_view()
+        script = f"""(() => {{
+            var e = document.querySelector("{drag_selector}"),
+                n = document.querySelector("{drop_selector}"),
+                i = 0, o = 0, r = 1,
+                a = '',
+                s = 'alt' === a || '\ue00a' === a,
+                l = 'ctrl' === a || '\ue009' === a,
+                c = 'shift' === a || '\ue008' === a,
+                u = e.ownerDocument,
+                f = e.getBoundingClientRect(),
+                g = n ? n.getBoundingClientRect() : f,
+                p = f.left + f.width / 2,
+                d = f.top + f.height / 2,
+                h = g.left + (i || g.width / 2),
+                m = g.top + (o || g.height / 2),
+                v = u.elementFromPoint(p, d),
+                y = u.elementFromPoint(h, m);
+            if (!v || !y) {{
+                var E = new Error(
+                    'source or target element is not interactable');
+                throw E.code = 15, E;
+            }}
+            var _ = {{
+                constructor: DataTransfer,
+                effectAllowed: null,
+                dropEffect: null,
+                types: [],
+                files: Object.setPrototypeOf([], null),
+                _items: Object.setPrototypeOf([], {{
+                    add: function(t, e) {{
+                        this[this.length] = {{
+                            _data: '' + t,
+                            kind: 'string',
+                            type: e,
+                            getAsFile: function() {{}},
+                            getAsString: function(t) {{ t(this._data); }}
+                        }};
+                        _.types.push(e);
+                    }},
+                    remove: function(t) {{
+                        Array.prototype.splice.call(this, 65535 & t, 1);
+                        _.types.splice(65535 & t, 1);
+                    }},
+                    clear: function(t, e) {{
+                        this.length = 0;
+                        _.types.length = 0;
+                    }}
+                }}),
+                setData: function(t, e) {{
+                    this.clearData(t); this._items.add(e, t); }},
+                getData: function(t) {{
+                    for (
+                        var e = this._items.length;
+                        e-- && this._items[e].type !== t;);
+                    return e >= 0 ? this._items[e]._data : null;
+                }},
+                clearData: function(t) {{
+                    for (
+                        var e = this._items.length;
+                        e-- && this._items[e].type !== t;);
+                    this._items.remove(e);
+                }},
+                setDragImage: function(t) {{}}
+            }};
+            function w(t, e, n, i) {{
+                for (var o = 0; o < e.length; ++o) {{
+                    var r = u.createEvent('MouseEvent');
+                    r.initMouseEvent(
+                        e[o], !0, !0, u.defaultView,
+                        0, 0, 0, p, d, l, s, c, !1, 0, null);
+                    t.dispatchEvent(r);
+                }}
+                i && setTimeout(i, n);
+            }}
+            function D(t, e, n, i) {{
+                var o = u.createEvent('DragEvent');
+                o.initMouseEvent(
+                    e, !0, !0, u.defaultView, 0, 0,
+                    0, p, d, l, s, c, !1, 0, null);
+                Object.setPrototypeOf(o, null);
+                o.dataTransfer = _;
+                Object.setPrototypeOf(o, DragEvent.prototype);
+                t.dispatchEvent(o);
+                i && setTimeout(i, n);
+            }}
+            'items' in DataTransfer.prototype && (_.items = _._items);
+            w(v, ['pointerdown', 'mousedown'], 1, function() {{
+                for (var t = v; t && !t.draggable;) t = t.parentElement;
+                if (t && t.contains(v)) {{
+                    var e = y.getBoundingClientRect();
+                    D(v, 'dragstart', r, function() {{
+                        var t = y.getBoundingClientRect();
+                        p = t.left + h - e.left;
+                        d = t.top + m - e.top;
+                        D(y, 'dragenter', 1, function() {{
+                            D(y, 'dragover', r, function() {{
+                                D(
+                                    u.elementFromPoint(p, d),
+                                    'drop', 1, function() {{
+                                    D(v, 'dragend', 1, function() {{
+                                        w(
+                                            u.elementFromPoint(p, d),
+                                            ['mouseup', 'pointerup']);
+                                    }});
+                                }});
+                            }});
+                        }});
+                    }});
+                }}
+            }});
+        }})();"""
+        self.evaluate(script)
+        self.__slow_mode_pause_if_set()
+        self.loop.run_until_complete(self.page.wait(0.2))
+
     def mouse_click(self, selector, timeout=None, scroll=True):
-        """(Attempt simulating a mouse click)"""
+        """(Simulate a mouse click)"""
         if not timeout:
             timeout = settings.SMALL_TIMEOUT
         self.__slow_mode_pause_if_set()
@@ -998,7 +1132,10 @@ class CDPMethods():
         options = element.query_selector_all("option")
         for found_option in options:
             if found_option.text.strip() == option.strip():
-                found_option.select_option()
+                try:
+                    self.type(dropdown_selector, option)
+                except Exception:
+                    found_option.select_option()
                 return
         raise Exception(
             "Unable to find text option {%s} in dropdown {%s}!"
@@ -1149,7 +1286,7 @@ class CDPMethods():
             except AttributeError:
                 element = self.select(selector, timeout=0.1)
                 element.send_keys(key)
-            time.sleep(float(0.042 + (random.random() / 110.0)))
+            time.sleep(float(0.0422 + (random.random() / 112.0)))
         if submit:
             element.send_keys("\r\n")
             time.sleep(0.044)
@@ -1186,6 +1323,10 @@ class CDPMethods():
         element.clear_input()
         self.__slow_mode_pause_if_set()
         self.loop.run_until_complete(self.page.sleep(0.025))
+
+    def clear(self, selector, timeout=None):
+        """Same as clear_input(), which clears the text field."""
+        self.clear_input(selector=selector, timeout=timeout)
 
     def set_value(self, selector, text, timeout=None):
         """Similar to send_keys(), but clears the text field first."""
@@ -2078,7 +2219,7 @@ class CDPMethods():
             self.__make_sure_pyautogui_lock_is_writable()
             for key in keys:
                 pyautogui.press(key)
-                time.sleep(float(0.042 + (random.random() / 110.0)))
+                time.sleep(float(0.0422 + (random.random() / 112.0)))
         self.__slow_mode_pause_if_set()
         self.loop.run_until_complete(self.page.sleep(0.025))
 
@@ -2206,6 +2347,15 @@ class CDPMethods():
         driver = self.driver
         if hasattr(driver, "cdp_base"):
             driver = driver.cdp_base
+        if (
+            self.driver.config.uses_custom_data_dir
+            and shared_utils.is_windows()
+        ):
+            # Let Windows save the session to a custom use_data_dir
+            self.loop.run_until_complete(
+                driver.connection.send(mycdp.browser.close())
+            )
+            time.sleep(0.3)
         driver.quit()
 
     def _on_a_cf_turnstile_page(self, source=None):
