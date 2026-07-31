@@ -2195,7 +2195,55 @@ class CDPMethods():
                 hasattr(pyautogui_copy, "_pyautogui_wayland")
                 and not pyautogui_copy._pyautogui_wayland._display
             ):
-                pyautogui_copy._pyautogui_wayland.setWindow(40);
+                browser_config = getattr(self.driver, "config", None)
+                browser_path = str(
+                    getattr(browser_config, "browser_executable_path", "")
+                ).lower()
+                binary_location = str(
+                    getattr(sb_config, "binary_location", "")
+                ).lower()
+                cdp_browser = str(getattr(sb_config, "_cdp_browser", "")).lower()
+                shortcut = str(
+                    getattr(sb_config, "_browser_shortcut", "")
+                ).lower()
+                sb_browser = str(getattr(sb_config, "browser", "")).lower()
+                browser = cdp_browser or shortcut or sb_browser
+                browser_path = " ".join([browser_path, binary_location])
+                browser_label = browser or browser_path
+                offset = 44
+                if (
+                    browser == "brave"
+                    or "brave" in browser_path
+                ):
+                    offset = -132
+                    browser_label = "brave"
+                elif (
+                    browser == "edge"
+                    or "microsoft-edge" in browser_path
+                    or browser_path.endswith("/edge")
+                    or browser_path.endswith("/edge.exe")
+                ):
+                    offset = 29
+                    browser_label = "edge"
+                elif (
+                    binary_location in ["_chromium_", "cft", "chs"]
+                    or (
+                        browser == "chrome"
+                        and "chromium-browser" not in browser_path
+                    )
+                    or "chromium_drivers" in browser_path
+                    or "cft_drivers" in browser_path
+                    or "google-chrome" in browser_path
+                ):
+                    offset = 25
+                    browser_label = "chrome"
+                print(
+                    "using pyautogui wayland window offset",
+                    offset,
+                    "browser",
+                    browser_label,
+                )
+                pyautogui_copy._pyautogui_wayland.setWindow(offset)
         return pyautogui_copy
 
     def gui_press_key(self, key):
