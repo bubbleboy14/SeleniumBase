@@ -1197,6 +1197,31 @@ class BaseCase(unittest.TestCase):
             if self.undetectable:
                 time.sleep(0.02)
 
+    def fast_type(
+        self, selector, text, by="css selector", timeout=None, retry=False
+    ):
+        """During CDP Mode, calls sb.cdp.fast_type(selector, text),
+        which is useful when you don't need to slow down for stealth.
+        Otherwise, this method calls self.update_text(selector, text),
+        which is already fast because there's no stealth to protect.
+        @Params
+        selector - The selector of the text field.
+        text - The new text to type into the text field.
+        by - The type of selector to search by. (Default: "css selector")
+        timeout - How long to wait for the selector to be visible.
+        retry - If True, use JS if the Selenium text update fails.
+        """
+        self.__check_scope()
+        if not timeout:
+            timeout = settings.LARGE_TIMEOUT
+        if self.timeout_multiplier and timeout == settings.LARGE_TIMEOUT:
+            timeout = self.__get_new_timeout(timeout)
+        selector, by = self.__recalculate_selector(selector, by)
+        if self.__is_cdp_swap_needed():
+            self.cdp.fast_type(selector, text, timeout=timeout)
+            return
+        self.update_text(selector, text, by=by, timeout=timeout, retry=retry)
+
     def submit(self, selector, by="css selector"):
         """Alternative to self.driver.find_element_by_*(SELECTOR).submit()"""
         self.__check_scope()
@@ -4033,11 +4058,17 @@ class BaseCase(unittest.TestCase):
     def open_new_window(self, switch_to=True, **kwargs):
         """Opens a new browser tab/window and switches to it by default."""
         url = None
-        if self.__looks_like_a_page_url(str(switch_to)):
+        if "." in str(switch_to):
             # Different API for CDP Mode: First arg is a `url`.
             # (Also, don't break backwards compat for reg mode)
             url = switch_to
             switch_to = True
+        if url and not page_utils.is_valid_url(url):
+            new_url = "https://" + url
+            if not page_utils.is_valid_url(new_url):
+                raise Exception(f"Invalid URL: {url}")
+            else:
+                url = new_url
         if self.__is_cdp_swap_needed():
             self.cdp.open_new_tab(url=url, switch_to=switch_to, **kwargs)
             return
