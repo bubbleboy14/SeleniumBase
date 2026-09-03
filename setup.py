@@ -215,7 +215,7 @@ setup(
         'pytest-metadata==3.1.1',
         'pytest-ordering==0.6',
         'pytest-rerunfailures==16.3;python_version=="3.10"',
-        'pytest-rerunfailures==16.6;python_version>="3.11"',
+        'pytest-rerunfailures==16.6.1;python_version>="3.11"',
         'pytest-xdist==3.8.0',
         'parameterized==0.9.0',
         'behave==1.2.6',  # Newer ones had issues
@@ -303,7 +303,7 @@ setup(
         # Required for local MCP server debugging with:
         #     mcp dev server.py
         "uv": [
-            "uv>=0.12.8"
+            "uv>=0.12.9"
         ],
     },
     packages=[
