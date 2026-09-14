@@ -91,27 +91,27 @@ Restart Claude Desktop. You should see a 🔨 tools icon indicating the server c
 
 * `start_browser`
 * `close_browser`
-* `navigate`
+* `open_url`
 * `manage_history`
 * `get_page_info`
 * `find_elements`
 * `get_content`
 * `get_attributes`
-* `check_condition`
-* `click`
+* `check_if_condition`
+* `click_element`
 * `hover_action`
 * `type_text`
 * `select_option`
-* `focus`
-* `wait_for`
+* `focus_element`
+* `wait_for_condition`
 * `assert_condition`
 * `manage_cookies`
 * `manage_storage`
-* `scroll`
+* `scroll_page`
 * `manage_window`
 * `manage_tabs`
 * `solve_captcha`
-* `save_output`
+* `save_page`
 * `run_javascript`
 
 ## 4. Connect it to Claude Code
@@ -146,23 +146,31 @@ claude mcp add seleniumbase-mcp -- uv run seleniumbase-mcp
 
 (run from inside this folder, for the same reason as above.)
 
+## Selectors
+
+Most tools accept a `selector` argument. Behavior varies slightly by tool, so check a tool's own docstring when it matters:
+
+- **CSS selectors** are preferred and supported by every tool that takes a selector.
+- **XPath** is accepted by several (not all) tools. Some tools go through SeleniumBase's XPath-to-CSS conversion first; expressions that can't be converted (e.g. `contains(...)`) aren't supported by those tools.
+- **SeleniumBase's visible-text selector** syntax, e.g. `a:contains("Sign in")`, is accepted by several tools (including `click_element`, when not using `all_matches`) but not all of them — `find_elements`, for example, only supports CSS/XPath.
+
 ## Tools exposed
 
-Tools here are grouped around a shared `selector` convention: `selector` args accept a CSS selector, or visible text (e.g. `a:contains("Sign in")`). Several near-identical one-off tools (e.g. separate click/hover/drag/wait/cookie/storage variants) have been consolidated into a single tool with a `mode`/`action`/`state`/`check` parameter, so there are fewer near-neighbor tools to disambiguate between while every underlying capability stays available.
+Tools here are grouped around a shared `selector` convention. Several near-identical one-off tools (e.g. separate click/hover/drag/wait/cookie/storage variants) have been consolidated into a single tool with a `mode`/`action`/`state`/`check` parameter, so there are fewer near-neighbor tools to disambiguate between while every underlying capability stays available. Tool names also follow a verb+object convention (`click_element`, `focus_element`, `scroll_page`, `save_page`, `open_url`) rather than bare verbs, so a tool's name signals what it acts on without needing to read its description.
 
 | Group             | Tool(s)                                                                                                                                            |
 | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------  |
 | Session           | `start_browser(url, headless, use_chromium, browser_executable_path, incognito, guest, ad_block, proxy)`, `close_browser`                          |
-| Navigation        | `navigate`, `manage_history(action: back/forward/reload/list)`, `get_page_info` (running status, url, title, origin, user agent in one call)       |
-| Finding & reading | `find_elements(selector, timeout, include_html)`, `get_content(selector, output_format: text/html/urls, include_shadow_dom)`, `get_attributes`, `check_condition(check: present/visible, text)` |
-| Interacting       | `click(selector, nth, all_matches, only_if_visible, parent_selector, timeout, scroll)`, `hover_action(selector1, selector2, action: none/click/drag_and_drop)`, `type_text(mode: fill_input/append/fast_type/set_value/clear_only)`, `select_option(by: text/value/index)`, `focus(action: scroll_to_element/focus/highlight)` |
-| Waiting           | `wait_for(state: present/visible/not_visible/absent/seconds_passed, text)`                                                                         |
+| Navigation        | `open_url`, `manage_history(action: back/forward/reload/list)`, `get_page_info` (running status, url, title, origin, user agent in one call)       |
+| Finding & reading | `find_elements(selector, timeout, include_html)`, `get_content(selector, output_format: text/html/urls, timeout)`, `get_attributes(selector, attribute, timeout)`, `check_if_condition(check: present/visible, text)` |
+| Interacting       | `click_element(selector, nth, all_matches, only_if_visible, parent_selector, timeout, scroll)`, `hover_action(selector1, selector2, action: hover/hover_and_click/drag_and_drop)`, `type_text(mode: fill_input/append/fast_type/set_value/clear_only)`, `select_option(by: text/value/index)`, `focus_element(action: scroll_to_element/focus/highlight, timeout)` |
+| Waiting           | `wait_for_condition(state: present/visible/not_visible/absent/seconds_passed, text)`                                                               |
 | Assertions        | `assert_condition(check: element_present/element_visible/text_visible/title/url/url_contains)`                                                     |
 | Cookies & storage | `manage_cookies(action: get_all/clear/save/load)`, `manage_storage(storage: local/session, action: get/set)`                                       |
-| Scrolling         | `scroll(direction: up/down/top/bottom, amount)`                                                                                                    |
-| Windows & tabs    | `manage_window(action: get_rect/set_rect/maximize/minimize)`, `manage_tabs(action: list/open/switch/switch_newest/close_active)`                   |
+| Scrolling         | `scroll_page(direction: up/down/top/bottom, amount)`                                                                                                |
+| Windows & tabs    | `manage_window(action: get_rect/set_rect/maximize/minimize)`, `manage_tabs(action: list_tabs/open_new_tab/switch_to_tab/switch_to_newest_tab/close_active_tab)`                   |
 | Captcha           | `solve_captcha`                                                                                                                                    |
-| Output & misc     | `save_output(format: screenshot/html/pdf)`, `run_javascript`,                                                                                      |
+| Output & misc     | `save_page(format: screenshot/html/pdf)`, `run_javascript`                                                                                          |
 
 ## Design notes / things to adapt for your use case
 
@@ -172,27 +180,19 @@ Tools here are grouped around a shared `selector` convention: `selector` args ac
 
 - **`start_browser` retries once before failing.** If the first launch attempt raises, it's retried once automatically before returning an error. This was added after seeing occasional first-attempt failures when testing against Glama's MCP Inspector; it costs nothing on the common case where the first launch already succeeds.
 
-- **Two error-handling paths, by design.** Most failures (a selector isn't found, an assertion fails, an invalid `action`/`mode`/`check` value is passed) are caught by the `handle_sb_errors` decorator and returned as a descriptive string, e.g. `Error in click: NoSuchElementException - ...`, so the calling agent can read the failure and self-correct. There's one deliberate exception: calling any tool other than `start_browser`/`close_browser` when no browser session is running raises `ToolError` (via the shared `_get_sb()` helper) instead of returning a string. `handle_sb_errors` explicitly re-raises `ToolError` rather than catching it, so this surfaces to the MCP client as a real tool-call error (`is_error=True`), not as ordinary text the agent has to pattern-match on. `start_browser` and `close_browser` handle their own lifecycle errors directly (e.g. "already running", a failed `quit()`) and also return strings rather than raising.
+- **Two error-handling paths, by design.** Most failures (a selector isn't found, an assertion fails, an invalid `action`/`mode`/`check` value is passed) are caught by the `handle_sb_errors` decorator and returned as a descriptive string, e.g. `Error in click_element: NoSuchElementException - ...`, so the calling agent can read the failure and self-correct. There's one deliberate exception: calling any tool other than `start_browser`/`close_browser` when no browser session is running raises `ToolError` (via the shared `_get_sb()` helper) instead of returning a string. `handle_sb_errors` explicitly re-raises `ToolError` rather than catching it, so this surfaces to the MCP client as a real tool-call error (`is_error=True`), not as ordinary text the agent has to pattern-match on. `start_browser` and `close_browser` handle their own lifecycle errors directly (e.g. "already running", a failed `quit()`) and also return strings rather than raising.
 
-- **No standalone session-status tool.** There is no separate `browser_status`-style tool. `get_page_info` doubles as the status check: it returns `{"running": False}` (optionally with an `error` field) when there's no active session or the session errors out, and page metadata (`running: True`, `url`, `title`, `origin`, `user_agent`) otherwise. `get_page_info` does not include navigation history — that lives on `manage_history(action="list")` instead (see below).
+- **`find_elements` catches its own lookup failures.** Its default `timeout` is 0.5 seconds (not 5, unlike most other tools here). A failed or empty lookup never raises: no matches returns `{"count": 0, "matches": []}`, and an actual lookup error (e.g. an unsupported selector) returns `{"count": 0, "matches": [], "error": "<details>"}` — the error lives inside the returned dict rather than surfacing as a top-level string from `handle_sb_errors`. Pass a longer `timeout` explicitly if the elements you're looking for may still be loading.
 
-- **Navigation and history live in one tool: `manage_history`.** What used to be `navigate_history` is now `manage_history`, and it gained a fourth action: `"list"`, which returns the browser's navigation history as `{"position": <0-indexed current entry>, "entries": [...]}`, where each entry has `id`, `url`, `user_typed_url`, `title`, and `transition_type`. `"back"`, `"forward"`, and `"reload"` behave as before. This is the only way to retrieve navigation history now — `get_page_info` doesn't return it.
+- **Hover, hover-and-click, and drag-and-drop share one tool.** In `hover_action(selector1, selector2, action)`, `action="hover"` (the default) hovers `selector1` only; `action="hover_and_click"` hovers `selector1` then clicks `selector2` (useful for dropdown/submenu items revealed by hovering); `action="drag_and_drop"` drags `selector1` onto `selector2`. (`selector2` is required when `action` is `"hover_and_click"` or `"drag_and_drop"`.)
 
-- **Content reading is consolidated into one tool.** `get_content` replaces what used to be three separate reads: page/element text, page/element HTML, and page-linked URLs. Pick the mode with `output_format` (`"text"`, `"html"`, or `"urls"`) rather than calling a dedicated `get_page_content` or `get_all_urls` tool — those no longer exist. Likewise, there's no standalone `get_user_agent` tool anymore; the User-Agent string is one of the fields returned by `get_page_info`.
+- **`scroll_page`'s `amount` isn't capped at 100.** Relative up/down scrolling by more than 100% of the viewport height is allowed (e.g. `amount=200` scrolls roughly two viewport heights); negative amounts are rejected for `"up"`/`"down"`.
 
-- **`check_condition` is deliberately narrow.** Its `check` parameter only accepts `"present"` or `"visible"` — there's no built-in `"count"` check anymore; call `find_elements` and read the returned `count` field instead. Passing `text` checks whether that text is visible within `selector` and takes priority over `check` when both are given — so `check_condition(text="Sign in")` behaves differently from `check_condition(check="visible")`, not as two variants of the same check. Note that an empty string for `text` (or for `wait_for`'s `selector`/`text`) is treated as not provided, since both tools now branch on truthiness rather than on `is not None`.
+- **Elements don't cross the wire as handles.** In native CDP Mode, `find_element()` returns a live object with its own methods (`el.click()`, `el.get_html()`, ...). MCP tools can only return JSON-serializable data, so `find_elements` resolves each match immediately to a plain dict (`tag_name`, `text`, and optionally `html`) instead of returning a handle you could call further methods on. If you need to act on one of several matches, use `click_element(selector, nth=...)` (acts by position) rather than "find, then click" as two separate steps.
 
-- **`find_elements` defaults to a fast, non-raising lookup.** Its default `timeout` is 0.5 seconds (not 5, unlike most other tools here), and a failed lookup returns `{"count": 0, "matches": []}` instead of raising — there is no error string on a miss, just an empty result. Pass a longer `timeout` explicitly if the elements you're looking for may still be loading.
+- **CAPTCHA-solving.** `solve_captcha` attempts to detect and interact with several challenge types over CDP (e.g. Cloudflare Turnstile, reCAPTCHA, hCaptcha, DataDome Slider, FriendlyCaptcha), including slider-style drag interactions, without guaranteeing success.
 
-- **Hover, clicking after hover, and drag-and-drop share one tool.** `hover_action(selector1, selector2, action)` replaces the earlier separate `hover` and `drag_and_drop` tools. `action="none"` hovers `selector1` only; `action="click"` hovers `selector1` then clicks `selector2` (useful for dropdown/submenu items revealed by hovering); `action="drag_and_drop"` drags `selector1` onto `selector2`. (`selector2` is required when `action` is `"click"` or `"drag_and_drop"`.)
-
-- **Non-activating element actions are `focus`.** What used to be `act_on_element` is now `focus(selector, action)`, with actions `scroll_to_element` (the default), `focus`, and `highlight` — note the default action is scrolling the element into view, not focusing it. None of these actions click, type into, select from, or otherwise activate the element; use `click`, `type_text`, `select_option`, or `hover_action` for that.
-
-- **Elements don't cross the wire as handles.** In native CDP Mode, `find_element()` returns a live object with its own methods (`el.click()`, `el.get_html()`, ...). MCP tools can only return JSON-serializable data, so `find_elements` resolves each match immediately to a plain dict (`tag_name`, `text`, and optionally `html`) instead of returning a handle you could call further methods on. If you need to act on one of several matches, use `click(selector, nth=...)` (acts by position) rather than "find, then click" as two separate steps.
-
-- **CAPTCHA-solving.** `solve_captcha` handles supported challenge types (e.g. Cloudflare Turnstile).
-
-- **Security.** `run_javascript` runs arbitrary JS, and `manage_storage` can expose authentication/session secrets; `manage_cookies` and `save_output` accept filenames/folders that can touch the filesystem. This server can also drive a real browser to real sites — don't expose it over an untrusted network transport; stdio + local trust (the default here) is the safe setup.
+- **Security.** `run_javascript` runs arbitrary JS, and `manage_storage` can expose authentication/session secrets; `manage_cookies` and `save_page` accept filenames/folders that can touch the filesystem. This server can also drive a real browser to real sites — don't expose it over an untrusted network transport; stdio + local trust (the default here) is the safe setup.
 
 ## Extending
 
