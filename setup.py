@@ -173,11 +173,11 @@ setup(
         'exceptiongroup>=1.3.1',
         'websockets~=16.1.1;python_version=="3.10"',
         'websockets>=16.1.1;python_version>="3.11"',
-        'filelock>=3.32.6',
+        'filelock>=4.0.0',
         'fasteners>=0.20',
         'mycdp>=1.4.0',
         'pynose>=1.5.5',
-        'platformdirs>=4.11.8',
+        'platformdirs>=4.11.10',
         'typing-extensions>=4.16.0',
         'sbvirtualdisplay>=1.4.0',
         'MarkupSafe>=3.0.3',
@@ -191,10 +191,10 @@ setup(
         'pygments>=2.20.1',
         'pyreadline3>=3.5.4;platform_system=="Windows"',
         'tabcompleter>=1.4.1',
-        'pdbp>=1.8.2',
-        'idna>=3.19',
+        'pdbp>=1.8.3',
+        'idna>=3.20',
         'charset-normalizer>=3.5.1,<4',
-        'urllib3>=2.7.0,<3',
+        'urllib3>=2.8.0,<3',
         'requests~=2.34.2',
         'sniffio==1.3.1',
         'h11==0.16.0',
@@ -215,7 +215,7 @@ setup(
         'pytest-metadata==3.1.1',
         'pytest-ordering==0.6',
         'pytest-rerunfailures==16.3;python_version=="3.10"',
-        'pytest-rerunfailures==16.6.1;python_version>="3.11"',
+        'pytest-rerunfailures==16.7;python_version>="3.11"',
         'pytest-xdist==3.8.0',
         'parameterized==0.9.0',
         'behave==1.2.6',  # Newer ones had issues
@@ -290,8 +290,8 @@ setup(
         # pip install -e .[playwright]
         # (For the Playwright integration.)
         "playwright": [
-            'playwright>=1.62.0',
-            'greenlet>=3.5.5',
+            'playwright>=1.63.0',
+            'greenlet>=3.5.6',
             'pyee>=13.0.1',
         ],
         # pip install -e .[pyautogui]
@@ -303,7 +303,7 @@ setup(
         # Required for local MCP server debugging with:
         #     mcp dev server.py
         "uv": [
-            "uv>=0.12.12"
+            "uv>=0.12.15"
         ],
     },
     packages=[
