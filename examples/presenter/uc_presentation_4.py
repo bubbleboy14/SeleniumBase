@@ -355,7 +355,7 @@ class UCPresentationClass(BaseCase):
         with SB(uc=True, test=True, guest=True) as sb:
             sb.activate_cdp_mode()
             sb.goto("www.planetminecraft.com/account/sign_in/")
-            sb.sleep(3)
+            sb.sleep(1)
             sb.solve_captcha()
             sb.wait_for_element_absent("input[disabled]")
             sb.sleep(2)
@@ -541,9 +541,9 @@ class UCPresentationClass(BaseCase):
                         unique_item_text.append(description.text)
                         print("* " + description.text)
                         price = item.query_selector(
-                            '[data-automation-id="product-price"]'
+                            '[data-testid="unified-global-product-price"]'
                         )
-                        if price:
+                        if price and price.text.strip():
                             price_text = price.text
                             price_text = price_text.split(
                                 "current price Now "
