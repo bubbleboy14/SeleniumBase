@@ -2,16 +2,16 @@
 
 <h2><a href="https://github.com/seleniumbase/SeleniumBase/"><img src="https://seleniumbase.github.io/img/logo6.png" title="SeleniumBase" width="32"></a> Example Tests:</h2>
 
+<h4>(For stealthy examples, see <a href="https://github.com/seleniumbase/SeleniumBase/tree/master/examples/cdp_mode">./cdp_mode/</a> and <a href="https://github.com/seleniumbase/SeleniumBase/blob/master/examples/cdp_mode/playwright/">./cdp_mode/playwright/</a>)</h4>
+
 <p align="left"><a align="center" href="https://github.com/seleniumbase/SeleniumBase/blob/master/examples/test_demo_site.py"><img align="center" src="https://seleniumbase.github.io/cdn/img/sb_demo_page.png" alt="SeleniumBase Demo Page" width="420" /></a></p>
 
-* Many <b>SeleniumBase</b> "tests" run with <b><code>pytest</code></b>.
+* <b><code>pytest</code></b> is the main runner for <b>SeleniumBase</b> "tests".
 * Chrome is the default browser if not specified.
 * Tests are structured using [25 unique design patterns](https://github.com/seleniumbase/SeleniumBase/blob/master/help_docs/syntax_formats.md).
 * Logs from test failures are saved to `./latest_logs/`.
 * Tests can be run with [multiple command-line options](https://github.com/seleniumbase/SeleniumBase/blob/master/help_docs/customizing_test_runs.md).
 * Examples can be found in [SeleniumBase/examples/](https://github.com/seleniumbase/SeleniumBase/tree/master/examples).
-* Stealthy CDP Mode examples: [SeleniumBase/examples/cdp_mode/](https://github.com/seleniumbase/SeleniumBase/tree/master/examples/cdp_mode).
-* Stealthy Playwright examples: [./examples/cdp_mode/playwright/](https://github.com/seleniumbase/SeleniumBase/blob/master/examples/cdp_mode/playwright/ReadMe.md).
 
 (NOTE: Some example tests fail on purpose to demonstrate [logging features](https://github.com/seleniumbase/SeleniumBase/blob/master/examples/example_logs/ReadMe.md).)
 
@@ -241,9 +241,9 @@ For more advanced **run commands**, such as using a proxy server, see [../help_d
 
 --------
 
-If you just need to perform some quick website verification on various devices, you can use the <a href="https://seleniumbase.io/devices/">SeleniumBase Device Farm</a>. Just plug in a website URL, and it will display how the website looks on four different devices:
+If you just need to perform some quick website verification on various devices, you can use the <a href="https://seleniumbase.io/devices/" target="_blank" rel="noopener">SeleniumBase Device Farm</a>. Just plug in a website URL, and it will display how the website looks on four different devices:
 
-<a href="https://seleniumbase.io/devices/?url=github.com"><img src="https://seleniumbase.github.io/cdn/img/github_demo2.png" width="540" title="SeleniumBase Mobile Mode" /></a><br />
+<a href="https://seleniumbase.io/devices/?url=github.com" target="_blank" rel="noopener"><img src="https://seleniumbase.github.io/cdn/img/github_demo2.png" width="540" title="SeleniumBase Mobile Mode" /></a><br />
 
 --------
 
@@ -259,7 +259,7 @@ python gui_test_runner.py
 
 --------
 
-<h3><a href="https://discord.gg/EdhQTn3EyE"><img src="https://seleniumbase.github.io/other/discord_icon.png" title="Join the SeleniumBase chat on Discord" alt="Join the SeleniumBase chat on Discord" width="44" /></a> <a href="https://discord.gg/EdhQTn3EyE">Join the SeleniumBase chat on Discord!</a></h3>
+<h3><a href="https://discord.gg/EdhQTn3EyE" target="_blank" rel="noopener"><img src="https://seleniumbase.github.io/other/discord_icon.png" title="Join the SeleniumBase chat on Discord" alt="Join the SeleniumBase chat on Discord" width="44" /></a> <a href="https://discord.gg/EdhQTn3EyE" target="_blank" rel="noopener">Join the SeleniumBase chat on Discord!</a></h3>
 
 Ask questions. Find answers. Learn how to automate!
 

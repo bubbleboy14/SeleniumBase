@@ -173,7 +173,8 @@ setup(
         'exceptiongroup>=1.3.1',
         'websockets~=16.1.1;python_version=="3.10"',
         'websockets>=16.1.1;python_version>="3.11"',
-        'filelock>=4.0.12',
+        'filelock==4.1.0;python_version=="3.10"',
+        'filelock>=4.2.0;python_version>="3.11"',
         'fasteners>=0.20',
         'mycdp>=1.4.0',
         'pynose>=1.5.5',
@@ -182,7 +183,7 @@ setup(
         'MarkupSafe>=3.0.4',
         'Jinja2>=3.1.6',
         'six>=1.17.0',
-        'parse>=1.22.2',
+        'parse>=1.22.3',
         'parse-type>=0.6.6',
         'colorama>=0.4.6',
         'psutil>=7.2.2',
@@ -202,12 +203,14 @@ setup(
         'trio-websocket~=0.12.2',
         'wsproto~=1.3.2',
         'websocket-client~=1.9.2',
-        'selenium==4.50.0',
-        'cssselect>=1.5.0,<2',
+        'selenium==4.51.0',
+        'cssselect~=1.5.0;python_version<"3.11"',
+        'cssselect>=1.6.0,<2;python_version>="3.11"',
         'sortedcontainers==2.4.0',
         'execnet==2.1.2',
         'iniconfig~=2.3.1',
-        'pluggy==1.6.0',
+        'pluggy==1.6.0;python_version<"3.11"',
+        'pluggy>=1.6.0,<1.8;python_version>="3.11"',
         'pytest==8.4.2;python_version<"3.11"',
         'pytest==9.1.1;python_version>="3.11"',
         'pytest-html==4.0.2',  # Newer ones had issues
@@ -218,7 +221,8 @@ setup(
         'pytest-xdist==3.8.0',
         'parameterized==0.9.0',
         'behave==1.2.6',  # Newer ones had issues
-        'soupsieve~=2.10.0',
+        'soupsieve~=2.10.0;python_version<"3.11.5"',
+        'soupsieve~=3.0.3;python_version>="3.11.5"',
         'beautifulsoup4~=4.15.0',
         'pyotp~=2.10.0',
         'python-xlib==0.33;platform_system=="Linux"',
@@ -268,7 +272,7 @@ setup(
             'pdfminer.six==20260107',
             'cryptography==50.0.2',
             'cffi==2.1.1',
-            'pycparser==3.0',
+            'pycparser==3.11',
         ],
         # pip install -e .[pillow]
         # (An optional library for image-processing.)
@@ -290,9 +294,10 @@ setup(
         # pip install -e .[playwright]
         # (For the Playwright integration.)
         "playwright": [
-            'playwright>=1.63.0',
+            'playwright>=1.64.0',
             'greenlet>=3.5.6',
-            'pyee>=13.0.1',
+            'pyee>=13.0.1;python_version<"3.12"',
+            'pyee>=14.0.0;python_version>="3.12"',
         ],
         # pip install -e .[pyautogui]
         # (Already a required dependency on Linux now.)
@@ -302,7 +307,7 @@ setup(
         # pip install -e .[uv]
         # (For the MCP integration and more.)
         "uv": [
-            "uv>=0.12.23"
+            "uv>=0.13.1"
         ],
     },
     packages=[
