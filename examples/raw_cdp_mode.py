@@ -1,7 +1,7 @@
-"""Bypass bot-detection with SeleniumBase CDP Mode"""
+"""Bypass bot-detection with SeleniumBase CDP Mode."""
 from seleniumbase import sb_cdp
 
-sb = sb_cdp.Chrome()  # Launch a stealth browser
+sb = sb_cdp.Chrome()  # Launches a stealth browser
 sb.goto("https://browserscan.net/bot-detection")
 sb.assert_element('strong:contains("Normal")')
 sb.sleep(1)
@@ -12,11 +12,17 @@ sb.assert_element_not_visible(".failed")
 sb.sleep(1)
 
 sb.goto("https://www.planetminecraft.com/account")
-sb.type('[name="email"]', "Name123")
+sb.type('[name="email"]', "Test123")
 sb.type('[name="password"]', "Pass")
 sb.click("input#autologin")
-sb.solve_captcha()  # Works on different CAPTCHAs
+sb.solve_captcha()
 sb.assert_element('input[name="login"]')
 sb.assert_element_not_visible("input[disabled]")
 sb.sleep(1)
-sb.quit()  # Quit browser before end-of-program
+
+sb.goto("https://gitlab.com/users/sign_in")
+sb.sleep(2)
+sb.solve_captcha()
+sb.highlight('h1:contains("GitLab")')
+sb.highlight('button:contains("Sign in")')
+sb.quit()

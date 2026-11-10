@@ -8,19 +8,11 @@
 <meta property="og:image" content="https://seleniumbase.github.io/cdn/img/mac_sb_logo_5b.png" />
 <link rel="icon" href="https://seleniumbase.github.io/img/logo7.png" />
 
-<h1 align="center">📊 SeleniumBase</h1>
-
-<h3 align="center">APIs for Web Scraping, Browser Automation, and E2E Testing.<br /></h3>
-
-<p align="center"><b align="center">Includes stealth options for bypassing bot-detection and CAPTCHAs.<br /></b></p>
+<h3 align="center" class="hero__title"><a href="https://github.com/seleniumbase/SeleniumBase/"><img src="https://seleniumbase.github.io/cdn/img/nice_logo_8t.png" alt="SeleniumBase" title="SeleniumBase" width="420" /></a><br /><b>All-in-one Browser Automation Framework:<br />Web Crawling / Testing / Scraping / Stealth</b></h3>
 
 <p align="center">
-<a href="https://pypi.python.org/pypi/seleniumbase" target="_blank" rel="noopener"><img src="https://img.shields.io/pypi/v/seleniumbase.svg?style=flat-square&color=3399EE" alt="PyPI version" height="20" /></a> <a href="https://github.com/seleniumbase/SeleniumBase/actions" target="_blank" rel="noopener"><img src="https://img.shields.io/github/actions/workflow/status/seleniumbase/SeleniumBase/python-package.yml?branch=master&style=flat-square&label=CI" alt="SeleniumBase GitHub Actions" height="20" /></a> <a href="https://seleniumbase.io" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/docs-seleniumbase.io-11BBAA.svg?style=flat-square" alt="SeleniumBase Docs" height="20" /></a> <a href="https://github.com/seleniumbase/SeleniumBase/blob/master/LICENSE" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/license-MIT-33A6C6.svg?style=flat-square" title="SeleniumBase" height="20" /></a> <a href="https://github.com/seleniumbase/SeleniumBase/tree/master/mcp_servers" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/MCP-tool_info-7C6EE5?style=flat-square" height="20" /></a> <a href="https://pepy.tech/projects/seleniumbase?timeRange=threeMonths&category=version&includeCIDownloads=true&granularity=daily&viewType=line&versions=*" target="_blank" rel="noopener"><img src="https://static.pepy.tech/badge/seleniumbase" alt="SeleniumBase PyPI downloads" height="20" /></a><br />
-<a href="https://www.youtube.com/playlist?list=PLp9uKicxkBc5UIlGi2BuE3aWC7JyXpD3m" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/docs-📺-D844E8.svg?style=flat-square&logo=YouTube&logoColor=white&label=YouTube" alt="YouTube Channel" height="20" /></a> <a href="https://www.facebook.com/SeleniumBase/" target="_blank" rel="noopener"> <img src="https://img.shields.io/badge/Facebook-4K_followers-1877F2?style=flat-square&logo=facebook&logoColor=white" alt="SeleniumBase Facebook Followers" height="20" /></a> <a href="https://x.com/seleniumbase" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/-1K_followers-1DA1F2?style=flat-square&logo=x&logoColor=white&labelColor=555555" alt="SeleniumBase X Followers" height="20" /></a> <a href="https://discord.gg/EdhQTn3EyE" target="_blank" rel="noopener"><img src="https://img.shields.io/discord/727927627830001734?style=flat-square&color=7289DA&label=Discord&logo=discord&logoColor=white" height="20" /></a> <a href="https://github.com/seleniumbase/SeleniumBase" target="_blank" rel="noopener"><img src="https://badgen.net/github/stars/seleniumbase/SeleniumBase" title="Stars" height="20" /></a>
-</p>
-
-<p align="center">
-<a href="https://trendshift.io/repositories/12493?utm_source=repository-badge&amp;utm_medium=badge&amp;utm_campaign=badge-repository-12493" target="_blank" rel="noopener"><img src="https://trendshift.io/api/badge/repositories/12493" alt="seleniumbase%2SeleniumBase | Trendshift" width="250" height="55"/></a>
+<a href="https://pypi.python.org/pypi/seleniumbase" target="_blank" rel="noopener"><img src="https://img.shields.io/pypi/v/seleniumbase.svg?style=flat-square&color=3399EE" alt="PyPI version" height="20" /></a> <a href="https://github.com/seleniumbase/SeleniumBase/actions" target="_blank" rel="noopener"><img src="https://flat.badgen.net/github/checks/seleniumbase/SeleniumBase/master?label=CI&" alt="CI Status" height="20" /></a> <a href="https://seleniumbase.io" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/docs-seleniumbase.io-11BBAA.svg?style=flat-square" alt="SeleniumBase Docs" height="20" /></a> <a href="https://github.com/seleniumbase/SeleniumBase/blob/master/LICENSE" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/license-MIT-33A6C6.svg?style=flat-square" title="SeleniumBase" height="20" /></a> <a href="https://github.com/seleniumbase/SeleniumBase/tree/master/mcp_servers" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/MCP-tool_info-7C6EE5?style=flat-square" height="20" /></a> <a href="https://pepy.tech/projects/seleniumbase?timeRange=threeMonths&category=version&includeCIDownloads=true&granularity=daily&viewType=line&versions=*" target="_blank" rel="noopener"><img src="https://static.pepy.tech/badge/seleniumbase" alt="SeleniumBase PyPI downloads" height="20" /></a><br />
+<a href="https://www.youtube.com/playlist?list=PLp9uKicxkBc5UIlGi2BuE3aWC7JyXpD3m" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/docs-📺-D844E8.svg?style=flat-square&logo=YouTube&logoColor=white&label=YouTube" alt="YouTube Channel" height="20" /></a> <a href="https://www.facebook.com/SeleniumBase/" target="_blank" rel="noopener"> <img src="https://img.shields.io/badge/Facebook-4K_followers-1877F2?style=flat-square&logo=facebook&logoColor=white" alt="SeleniumBase Facebook Followers" height="20" /></a> <a href="https://x.com/seleniumbase" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/-1K_followers-1DA1F2?style=flat-square&logo=x&logoColor=white&labelColor=555555" alt="SeleniumBase X Followers" height="20" /></a> <a href="https://discord.gg/EdhQTn3EyE" target="_blank" rel="noopener"><img src="https://flat.badgen.net/discord/online-members/EdhQTn3EyE?color=7289DA&icon=discord&label=Discord" height="20" alt="Discord Status" /></a> <a href="https://github.com/seleniumbase/SeleniumBase" target="_blank" rel="noopener"><img src="https://badgen.net/github/stars/seleniumbase/SeleniumBase" title="Stars" height="20" /></a>
 </p>
 
 <p align="center">
@@ -29,16 +21,16 @@
 <a href="https://github.com/seleniumbase/SeleniumBase/blob/master/help_docs/customizing_test_runs.md">🎛️ Options</a> |
 <a href="https://github.com/seleniumbase/SeleniumBase/blob/master/examples/ReadMe.md">📚 Examples</a> |
 <a href="https://github.com/seleniumbase/SeleniumBase/blob/master/seleniumbase/console_scripts/ReadMe.md">💻 Scripts</a> |
-<a href="https://github.com/seleniumbase/SeleniumBase/blob/master/help_docs/locale_codes.md">🗾 Locale</a>
+<a href="https://github.com/seleniumbase/SeleniumBase/blob/master/help_docs/locale_codes.md">🗾 Locales</a>
 <br />
 <a href="https://github.com/seleniumbase/SeleniumBase/blob/master/help_docs/method_summary.md">📗 API</a> |
 <a href="https://github.com/seleniumbase/SeleniumBase/blob/master/help_docs/cdp_mode_methods.md">📘 Stealth API</a> |
-<a href="https://github.com/seleniumbase/SeleniumBase/blob/master/help_docs/syntax_formats.md"> 🔠 DesignPatterns</a> |
+<a href="https://github.com/seleniumbase/SeleniumBase/blob/master/help_docs/syntax_formats.md"> 🔠 Syntax Formats</a> |
 <a href="https://github.com/seleniumbase/SeleniumBase/blob/master/help_docs/recorder_mode.md">🔴 Recorder</a> |
 <a href="https://github.com/seleniumbase/SeleniumBase/blob/master/examples/example_logs/ReadMe.md">📊 Dashboard</a>
 <br />
 <a href="https://github.com/seleniumbase/SeleniumBase/blob/master/help_docs/commander.md">🎖️ GUI</a> |
-<a href="https://seleniumbase.io/demo_page">📰 TestPage</a> |
+<a href="https://seleniumbase.io/demo_page">📰 Test Page</a> |
 <a href="https://github.com/seleniumbase/SeleniumBase/blob/master/help_docs/uc_mode.md">👤 UC Mode</a> |
 <a href="https://github.com/seleniumbase/SeleniumBase/blob/master/examples/cdp_mode/ReadMe.md">🐙 CDP Mode</a> |
 <a href="https://github.com/seleniumbase/SeleniumBase/blob/master/examples/chart_maker/ReadMe.md">📶 Charts</a> |
@@ -51,7 +43,7 @@
 <a href="https://github.com/seleniumbase/SeleniumBase/blob/master/examples/tour_examples/ReadMe.md">🚎 Tours</a>
 <br />
 <a href="https://github.com/seleniumbase/SeleniumBase/blob/master/mcp_servers/">🤖 MCP</a> |
-<a href="https://github.com/seleniumbase/SeleniumBase/blob/master/help_docs/js_package_manager.md">🟨 JS Mgr</a> |
+<a href="https://github.com/seleniumbase/SeleniumBase/blob/master/help_docs/js_package_manager.md">🟨 JS Tools</a> |
 <a href="https://github.com/seleniumbase/SeleniumBase/blob/master/help_docs/translations.md">🌏 Translator</a> |
 <a href="https://github.com/seleniumbase/SeleniumBase/blob/master/examples/presenter/ReadMe.md">🎞️ Presenter</a> |
 <a href="https://github.com/seleniumbase/SeleniumBase/blob/master/examples/visual_testing/ReadMe.md">🖼️ Visual</a> |
@@ -60,51 +52,53 @@
 
 --------
 
-🐙 <a translate="no" href="https://github.com/seleniumbase/SeleniumBase/blob/master/help_docs/uc_mode.md"><a translate="no" href="https://github.com/seleniumbase/SeleniumBase/blob/master/examples/cdp_mode/ReadMe.md"><b>CDP Mode</b></a> bypasses bot-detection and <a href="https://github.com/seleniumbase/SeleniumBase/blob/master/examples/cdp_mode/playwright/ReadMe.md">makes <span translate="no">Playwright</span> stealthy</a>.
+<h3 align="left">⚙️ High-level architecture and special modes:</h3>
 
-ℹ️ Example scripts that start or end with "<code>test</code>" run with <code><b>pytest</b></code>. Other scripts run directly with raw <code><b>python</b></code> (and start with "<code>raw</code>" to avoid confusion).
+<img src="https://seleniumbase.github.io/other/sb_architecture.png" width="595" style="max-width: 100% !important; height: auto !important;" alt="Stealthy architecture flowchart" />
+
+<ul>
+<li>🐙 <a translate="no" href="https://github.com/seleniumbase/SeleniumBase/blob/master/examples/cdp_mode/ReadMe.md"><b>CDP Mode</b></a> <b>bypasses bot-detection with Chromium-based browsers.</b></li>
+<li>🎭 <a href="https://github.com/seleniumbase/SeleniumBase/blob/master/examples/cdp_mode/playwright/ReadMe.md"><b><span translate="no">Stealthy Playwright Mode</span></b></a> <b>extends CDP Mode's stealth to Playwright.</b></li>
+</ul>
+<ul>
+<li><code><b>pip install seleniumbase</b></code> for the main framework.</li>
+<li><code><b>pip install playwright</b></code> for the optional integration.</li>
+</ul>
 
 --------
 
-📝 [This example](https://github.com/seleniumbase/SeleniumBase/blob/master/examples/raw_cdp_mode.py) uses <b><code translate="no">seleniumbase</code></b> <b><code translate="no">sb_cdp</code></b> (*[Pure CDP Mode](https://github.com/seleniumbase/SeleniumBase/blob/master/examples/cdp_mode/ReadMe.md#Pure_CDP_Mode)*):<br  /><em>(It bypasses BrowserScan, Sannysoft, and Cloudflare bot-detection)</em>
+🧪 End-to-End Testing examples are located in [./examples/](https://github.com/seleniumbase/SeleniumBase/blob/master/examples).
+
+🐙 Stealthy CDP Mode examples are located in [./examples/cdp_mode/](https://github.com/seleniumbase/SeleniumBase/tree/master/examples/cdp_mode).
+
+🎭 Stealthy Playwright examples are located in [./examples/cdp_mode/playwright/](https://github.com/seleniumbase/SeleniumBase/blob/master/examples/cdp_mode/playwright/).
+
+> [!NOTE]
+> Examples that start with `test` run with **`pytest`**.<br />
+> Other examples run directly with raw **`python`**.
+
+--------
+
+📝 [This example](https://github.com/seleniumbase/SeleniumBase/blob/master/examples/cdp_mode/raw_cdp_mode.py) uses <b><code translate="no">seleniumbase</code></b> <b><code translate="no">sb_cdp</code></b> (*[Pure CDP Mode](https://github.com/seleniumbase/SeleniumBase/blob/master/examples/cdp_mode/ReadMe.md#Pure_CDP_Mode)*):<br  /><em>(It shows some basic methods and bypasses a Cloudflare Turnstile)</em>
 
 ```python
 from seleniumbase import sb_cdp
 
-sb = sb_cdp.Chrome()  # Launch a stealth browser
-sb.goto("https://browserscan.net/bot-detection")
-sb.assert_element('strong:contains("Normal")')
-sb.sleep(1)
-
-sb.goto("https://bot.sannysoft.com/")
-sb.assert_element(".passed")
-sb.assert_element_not_visible(".failed")
-sb.sleep(1)
-
+sb = sb_cdp.Chrome()  # Launches a stealth browser
 sb.goto("https://www.planetminecraft.com/account")
-sb.type('[name="email"]', "Name123")
+sb.type('[name="email"]', "Test123")
 sb.type('[name="password"]', "Pass")
-sb.click("input#autologin")
-sb.solve_captcha()  # Works on different CAPTCHAs
+sb.click("input#autologin")  # Unchecks a checkbox
+sb.solve_captcha()  # (as backup if not automatic)
 sb.assert_element('input[name="login"]')
 sb.assert_element_not_visible("input[disabled]")
-sb.sleep(1)
-sb.quit()  # Quit browser before end-of-program
+sb.sleep(1)  # (only to slow down the live demo)
+sb.quit()  # (otherwise quits automatically at end)
 ```
 
-<p align="center">
-<img src="https://seleniumbase.github.io/cdn/img/results_normal.jpg" width="520" style="max-width: 100% !important; height: auto !important;" alt="BrowserScan Test Results: Normal" />
-<br /><em>(All BrowserScan bot-detection tests passed successfully)</em>
-</p>
-
-<p align="center">
-<img src="https://seleniumbase.github.io/other/sannysoft_success.jpg" width="428" style="max-width: 100% !important; height: auto !important;" alt="All Sannysoft tests passed successfully" />
-<br /><em>(All Sannysoft bot-detection tests passed successfully)</em>
-</p>
-
-<p align="center">
-<img src="https://seleniumbase.github.io/other/pmc_captcha_2.png" width="530" style="max-width: 100% !important; height: auto !important;" alt="Cloudflare Turnstile bypassed successfully" />
-<br /><em>(Cloudflare Turnstile bypassed successfully on Planet Minecraft)</em>
+<p align="left">
+<img src="https://seleniumbase.github.io/other/pmc_captcha_3.png" width="542" style="max-width: 100% !important; height: auto !important;" alt="Cloudflare Turnstile bypassed successfully" />
+<br /><em>(Note that the click action only unchecked the "Stay signed in" checkbox.)</em>
 </p>
 
 --------
@@ -115,7 +109,7 @@ sb.quit()  # Quit browser before end-of-program
 
 --------
 
-<p align="left">📝 <a href="https://github.com/seleniumbase/SeleniumBase/blob/master/examples/cdp_mode/raw_cdp_yc_news.py" target="_blank" rel="noopener">This script</a> scrapes Hacker News listings:</p>
+<p align="left">📝 <a href="https://github.com/seleniumbase/SeleniumBase/blob/master/examples/cdp_mode/raw_cdp_yc_news.py" target="_blank" rel="noopener">This script</a> searches Hacker News via Algolia. Then prints items and saves to PDF:</p>
 
 ```python
 from seleniumbase import sb_cdp
@@ -124,7 +118,9 @@ sb = sb_cdp.Chrome(fast=True)
 sb.goto("https://hn.algolia.com/?query=seleniumbase")
 elements = sb.find_elements("div.Story_title > a")
 for element in elements:
-    print("* " + element.text)
+    print("--> " + element.text)
+sb.save_as_pdf("sb_news.pdf", folder="./downloaded_files/")
+print("*** PDF saved to: ./downloaded_files/sb_news.pdf")
 ```
 
 ```
@@ -132,7 +128,7 @@ python raw_cdp_yc_news.py
 ```
 
 <p align="left">
-<img src="https://seleniumbase.github.io/other/yc_news_results.png" alt="SeleniumBase" width="510" style="max-width: 100% !important; height: auto !important;"/>
+<img src="https://seleniumbase.github.io/other/yc_news_results_2.png" alt="SeleniumBase" width="510" style="max-width: 100% !important; height: auto !important;"/>
 </p>
 
 --------
@@ -161,14 +157,6 @@ python raw_gitlab.py
 
 --------
 
-🧪 End-to-End Testing examples are located in [./examples/](https://github.com/seleniumbase/SeleniumBase/blob/master/examples).
-
-🐙 Stealthy CDP Mode examples are located in [./examples/cdp_mode/](https://github.com/seleniumbase/SeleniumBase/tree/master/examples/cdp_mode).
-
-🎭 Stealthy Playwright examples are located in [./examples/cdp_mode/playwright/](https://github.com/seleniumbase/SeleniumBase/blob/master/examples/cdp_mode/playwright/).
-
---------
-
 <h3 align="left">🌐 CLI Options for Supported Chromium Browsers</h3>
 
 <p>💡 You can set which Chromium browser to use via command-line parameters:</p>
@@ -187,12 +175,6 @@ The Chromium browser can also be set via method args, eg: `cft=True`, `use_chrom
 ```python
 sb = sb_cdp.Chrome(use_chromium=True)
 ```
-
---------
-
-<h3 align="left">⚙️ Stealthy architecture flowchart:</h3>
-
-<img src="https://seleniumbase.github.io/other/sb_architecture.png" width="530" style="max-width: 100% !important; height: auto !important;" alt="Stealthy architecture flowchart" />
 
 --------
 
@@ -284,7 +266,7 @@ pytest test_demo_site.py
 
 --------
 
-<p align="left"><a href="https://github.com/seleniumbase/SeleniumBase/"><img src="https://seleniumbase.github.io/cdn/img/super_logo_sb3.png" alt="SeleniumBase" title="SeleniumBase" width="232" /></a></p>
+<p align="left"><a href="https://github.com/seleniumbase/SeleniumBase/"><img src="https://seleniumbase.github.io/cdn/img/super_logo_sb3.png" alt="SeleniumBase" title="SeleniumBase" width="248" /></a></p>
 
 <blockquote>
 <p dir="auto"><strong>Explore the README:</strong></p>
@@ -1514,7 +1496,7 @@ pytest --reruns=1 --reruns-delay=1
 
 <p><div><b><a href="https://github.com/mdmintz" target="_blank" rel="noopener">https://github.com/mdmintz</a></b></div></p>
 
-<div><a href="https://github.com/seleniumbase/SeleniumBase/"><img src="https://seleniumbase.github.io/cdn/img/super_logo_sb3.png" title="SeleniumBase" width="310" style="max-width: 100% !important; height: auto !important;" /></a></div>
+<div><a href="https://github.com/seleniumbase/SeleniumBase/"><img src="https://seleniumbase.github.io/cdn/img/super_logo_sb6.png" title="SeleniumBase" width="310" style="max-width: 100% !important; height: auto !important;" /></a></div>
 <div><a href="https://github.com/seleniumbase/SeleniumBase"><img src="https://img.shields.io/badge/tested%20with-SeleniumBase-04C38E.svg" alt="Tested with SeleniumBase" /></a> <img src="https://views.whatilearened.today/views/github/seleniumbase/SeleniumBase.svg" width="98px" height="20px" alt="Views" /></div>
 <div><a href="https://seleniumbase.io"><img src="https://img.shields.io/badge/docs-seleniumbase.io-11BBAA.svg" alt="SeleniumBase Docs" height="20" /></a> <a href="https://github.com/seleniumbase/SeleniumBase/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-MIT-22BBCC.svg" title="SeleniumBase" height="20" /></a> </div>
 <div align="left"></div>
