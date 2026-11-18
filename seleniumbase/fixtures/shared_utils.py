@@ -3,6 +3,7 @@ import colorama
 import os
 import pathlib
 import platform
+import subprocess
 import sys
 import time
 from contextlib import suppress
@@ -13,7 +14,6 @@ from seleniumbase.fixtures import constants
 
 def pip_install(package, version=None):
     import fasteners
-    import subprocess
 
     pip_install_lock = fasteners.InterProcessLock(
         constants.PipInstall.LOCKFILE
@@ -56,9 +56,12 @@ def get_mfa_code(totp_key=None):
     to using the one provided in [seleniumbase/config/settings.py].
     Google Authenticator codes expire & change at 30-sec intervals.
     If the fetched password expires in the next 1.2 seconds, waits
-    for a new one before returning it (may take up to 1.2 seconds).
-    See https://pyotp.readthedocs.io/en/latest/ for details."""
-    import pyotp
+    for a new one before returning it (may take up to 1.2 seconds)."""
+    import base64
+    import binascii
+    import hashlib
+    import hmac
+    import struct
 
     if not totp_key:
         totp_key = settings.TOTP_KEY
@@ -73,8 +76,20 @@ def get_mfa_code(totp_key=None):
             if not float(cycle_lifespan) > 0.96:
                 # The new password cycle has begun
                 break
-    totp = pyotp.TOTP(totp_key)
-    return str(totp.now())
+    normalized_key = "".join(str(totp_key).split()).upper()
+    padded_key = normalized_key + "=" * (-len(normalized_key) % 8)
+    try:
+        secret_bytes = base64.b32decode(padded_key)
+    except binascii.Error as exc:
+        raise ValueError(
+            "Invalid TOTP secret key: must be a valid Base32 string."
+        ) from exc
+    counter = struct.pack(">Q", int(time.time() // 30))
+    digest = hmac.new(secret_bytes, counter, hashlib.sha1).digest()
+    offset = digest[-1] & 0x0F
+    truncated = struct.unpack(">I", digest[offset: offset + 4])[0]
+    code_int = (truncated & 0x7FFFFFFF) % 1000000
+    return f"{code_int:06d}"
 
 
 def is_arm_linux():
@@ -167,6 +182,25 @@ def is_cdp_swap_needed(driver):
         and hasattr(driver, "is_connected")
         and not driver.is_connected()
     )
+
+
+def fix_playwright_node_compatibility():
+    """Use system Node.js on macOS versions below 13.5"""
+    if platform.system() != "Darwin":
+        return
+    mac_version = platform.mac_ver()[0]
+    if not mac_version:
+        return
+    version = tuple(int(x) for x in mac_version.split(".")[:2])
+    if version < (13, 5):
+        with suppress(Exception):
+            node_path = subprocess.run(
+                ["which", "node"],
+                capture_output=True,
+                text=True,
+            ).stdout.strip()
+            if node_path:
+                os.environ["PLAYWRIGHT_NODEJS_PATH"] = node_path
 
 
 def is_chrome_130_or_newer(self, binary_location=None):
